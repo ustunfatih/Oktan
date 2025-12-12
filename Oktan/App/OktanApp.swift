@@ -30,11 +30,15 @@ struct OktanApp: App {
     /// Global error handler
     @State private var errorHandler = ErrorHandler()
     
+    /// Notification service
+    @State private var notificationService = NotificationService()
+    
     // MARK: - Other State
     
     @State private var appSettings = AppSettings()
     @State private var authManager = AuthenticationManager()
     @State private var showSplash = true
+    @Environment(\.scenePhase) private var scenePhase
     @State private var isInitialized = false
 
     // MARK: - Initialization
@@ -67,6 +71,7 @@ struct OktanApp: App {
                     .environment(appSettings)
                     .environment(authManager)
                     .environment(errorHandler)
+                    .environment(notificationService)
                     .errorAlert(errorHandler)
                     .opacity(showSplash ? 0 : 1)
                     .modelContainer(modelContainer)
@@ -91,6 +96,11 @@ struct OktanApp: App {
                     }
                 } else {
                     showSplash = false
+                }
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .active {
+                    notificationService.clearBadge()
                 }
             }
         }

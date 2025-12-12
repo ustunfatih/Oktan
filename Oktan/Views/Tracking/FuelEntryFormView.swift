@@ -3,6 +3,7 @@ import SwiftUI
 struct FuelEntryFormView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var repository: FuelRepository
+    @Environment(NotificationService.self) private var notificationService
 
     private let existingEntry: FuelEntry?
     private var isEditing: Bool { existingEntry != nil }
@@ -181,6 +182,9 @@ struct FuelEntryFormView: View {
             }
         }
 
+        // Reset inactivity reminder since user just logged an entry
+        Task { await notificationService.scheduleInactivityReminder(lastEntryDate: date) }
+        
         triggerHapticFeedback()
         dismiss()
     }

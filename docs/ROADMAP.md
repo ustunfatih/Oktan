@@ -144,18 +144,27 @@ Strengthen the codebase before adding major features.
 ## Phase 7: Notifications & Reminders 🔔
 **Priority: MEDIUM** | **Status: PENDING**
 
-### 7.1 Reminder System
-- [ ] User-configurable reminder frequency
-  - Every X days
-  - Weekly on specific day
-  - Monthly
-  - Never
-- [ ] Local notifications
-- [ ] Reminder settings in Settings tab
+---
 
-### 7.2 Smart Notifications (Optional)
-- [ ] "You haven't logged in X days" reminder
-- [ ] Fuel price trends (if API available)
+## Phase 7: Notifications & Reminders 🔔 ✅
+**Priority: MEDIUM** | **Status: COMPLETE**
+
+### 7.1 Reminder System ✅
+- [x] User-configurable frequency (Daily, 3 days, Weekly, Biweekly, Monthly)
+- [x] Specific day/time selection for reminders
+- [x] Local notification scheduling
+- [x] Permission handling with UI feedback
+- [x] Dedicated Notification Settings UI
+- [x] Persistent settings via UserDefaults
+
+### 7.2 Smart Notifications ✅
+- [x] "We miss you" inactivity reminder
+- [x] Configurable inactivity threshold (7, 14, 21, 30 days)
+
+> **Notification Files:**
+> - `NotificationService.swift` - Core service logic
+> - `NotificationSettingsView.swift` - Configuration UI
+> - `SettingsView.swift` - Integration point
 
 ---
 

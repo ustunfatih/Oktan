@@ -62,6 +62,11 @@ struct SettingsView: View {
                     Toggle("Show splash animation", isOn: $settings.showSplashAnimation)
                 }
                 
+                // Notifications Section
+                Section("Notifications") {
+                    NotificationLink()
+                }
+                
                 // Data Section
                 Section {
                     Button(action: { showingCSVImport = true }) {
@@ -251,4 +256,31 @@ struct AboutView: View {
 #Preview {
     SettingsView(settings: AppSettings())
         .environmentObject(FuelRepository())
+        .environment(NotificationService())
+}
+
+// MARK: - Notification Link Helper
+
+private struct NotificationLink: View {
+    @Environment(NotificationService.self) private var notificationService
+    
+    var body: some View {
+        NavigationLink {
+            NotificationSettingsView(notificationService: notificationService)
+        } label: {
+            HStack {
+                Label("Reminders", systemImage: "bell.badge")
+                Spacer()
+                if notificationService.reminderFrequency != .never {
+                    Text(notificationService.reminderFrequency.displayName)
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
+                } else {
+                    Text("Off")
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
+                }
+            }
+        }
+    }
 }
