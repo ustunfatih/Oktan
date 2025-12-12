@@ -864,6 +864,9 @@
     "Get a gentle nudge when you haven't logged entries in a while." : {
 
     },
+    "Get advanced insights and keep your data safe." : {
+
+    },
     "Get reminders to log your fill-ups and track your fuel efficiency." : {
 
     },
@@ -1406,6 +1409,9 @@
         }
       }
     },
+    "Restore Purchases" : {
+
+    },
     "Retry" : {
 
     },
@@ -1619,6 +1625,9 @@
           }
         }
       }
+    },
+    "Subscribe for $4.99/year" : {
+
     },
     "Supported columns:" : {
 
@@ -1861,6 +1870,12 @@
       }
     },
     "Unknown status" : {
+
+    },
+    "Unlock Oktan Premium" : {
+
+    },
+    "Unlock Premium" : {
 
     },
     "Update to the latest iOS version if available." : {

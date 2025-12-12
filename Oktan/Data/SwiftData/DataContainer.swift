@@ -40,8 +40,26 @@ enum DataContainer {
     /// - Parameter inMemory: Whether to use in-memory storage (for testing/previews)
     /// - Returns: Configured ModelContainer
     static func create(inMemory: Bool = false) throws -> ModelContainer {
-        let configuration = inMemory ? inMemoryConfiguration : localConfiguration
-        return try ModelContainer(for: schema, configurations: [configuration])
+        if inMemory {
+            return try ModelContainer(for: schema, configurations: [inMemoryConfiguration])
+        }
+        
+        do {
+            // Try enabling CloudKit (default behavior if entitlements exist)
+            return try ModelContainer(for: schema, configurations: [localConfiguration])
+        } catch {
+            print("CloudKit container failed to initialize: \(error). Falling back to local-only.")
+            
+            // Fallback: Disable CloudKit explicitly
+            let localSchema = Schema([FuelEntrySD.self, CarSD.self])
+            let fallbackConfig = ModelConfiguration(
+                schema: localSchema,
+                isStoredInMemoryOnly: false,
+                allowsSave: true,
+                cloudKitDatabase: .none
+            )
+            return try ModelContainer(for: schema, configurations: [fallbackConfig])
+        }
     }
     
     /// Creates a container for SwiftUI previews with sample data
