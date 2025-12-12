@@ -6,7 +6,20 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BC6127002EECAB780025A96B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC6126FF2EECAB780025A96B /* WidgetKit.framework */; };
+		BC6127022EECAB780025A96B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC6127012EECAB780025A96B /* SwiftUI.framework */; };
+		BC6127132EECAB7A0025A96B /* OktanWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		BC6127112EECAB7A0025A96B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BC5E9A8D2EE9D52800489193 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC6126FC2EECAB780025A96B;
+			remoteInfo = OktanWidgetsExtension;
+		};
 		BCA4F6242EEC9530002504C6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BC5E9A8D2EE9D52800489193 /* Project object */;
@@ -16,8 +29,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		BC6127182EECAB7A0025A96B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BC6127132EECAB7A0025A96B /* OktanWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		BC5E9A952EE9D52800489193 /* oktan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = oktan.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OktanWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC6126FF2EECAB780025A96B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		BC6127012EECAB780025A96B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		BCA4F6202EEC9530002504C6 /* oktanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = oktanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -29,6 +59,13 @@
 			);
 			target = BC5E9A942EE9D52800489193 /* oktan */;
 		};
+		BC6127172EECAB7A0025A96B /* Exceptions for "OktanWidgets" folder in "OktanWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BC6126FC2EECAB780025A96B /* OktanWidgetsExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -38,6 +75,14 @@
 				BC5E9AC82EE9D5FB00489193 /* Exceptions for "oktan" folder in "oktan" target */,
 			);
 			path = oktan;
+			sourceTree = "<group>";
+		};
+		BC6127032EECAB780025A96B /* OktanWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BC6127172EECAB7A0025A96B /* Exceptions for "OktanWidgets" folder in "OktanWidgetsExtension" target */,
+			);
+			path = OktanWidgets;
 			sourceTree = "<group>";
 		};
 		BCA4F6212EEC9530002504C6 /* oktanTests */ = {
@@ -52,6 +97,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC6126FA2EECAB780025A96B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC6127022EECAB780025A96B /* SwiftUI.framework in Frameworks */,
+				BC6127002EECAB780025A96B /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +124,8 @@
 			children = (
 				BC5E9A972EE9D52800489193 /* oktan */,
 				BCA4F6212EEC9530002504C6 /* oktanTests */,
+				BC6127032EECAB780025A96B /* OktanWidgets */,
+				BC6126FE2EECAB780025A96B /* Frameworks */,
 				BC5E9A962EE9D52800489193 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,8 +135,18 @@
 			children = (
 				BC5E9A952EE9D52800489193 /* oktan.app */,
 				BCA4F6202EEC9530002504C6 /* oktanTests.xctest */,
+				BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BC6126FE2EECAB780025A96B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BC6126FF2EECAB780025A96B /* WidgetKit.framework */,
+				BC6127012EECAB780025A96B /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,10 +159,12 @@
 				BC5E9A912EE9D52800489193 /* Sources */,
 				BC5E9A922EE9D52800489193 /* Frameworks */,
 				BC5E9A932EE9D52800489193 /* Resources */,
+				BC6127182EECAB7A0025A96B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BC6127122EECAB7A0025A96B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				BC5E9A972EE9D52800489193 /* oktan */,
@@ -107,6 +175,28 @@
 			productName = oktan;
 			productReference = BC5E9A952EE9D52800489193 /* oktan.app */;
 			productType = "com.apple.product-type.application";
+		};
+		BC6126FC2EECAB780025A96B /* OktanWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC6127142EECAB7A0025A96B /* Build configuration list for PBXNativeTarget "OktanWidgetsExtension" */;
+			buildPhases = (
+				BC6126F92EECAB780025A96B /* Sources */,
+				BC6126FA2EECAB780025A96B /* Frameworks */,
+				BC6126FB2EECAB780025A96B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				BC6127032EECAB780025A96B /* OktanWidgets */,
+			);
+			name = OktanWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = OktanWidgetsExtension;
+			productReference = BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		BCA4F61F2EEC9530002504C6 /* oktanTests */ = {
 			isa = PBXNativeTarget;
@@ -144,6 +234,9 @@
 					BC5E9A942EE9D52800489193 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
+					BC6126FC2EECAB780025A96B = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
 					BCA4F61F2EEC9530002504C6 = {
 						CreatedOnToolsVersion = 26.1.1;
 						TestTargetID = BC5E9A942EE9D52800489193;
@@ -167,12 +260,20 @@
 			targets = (
 				BC5E9A942EE9D52800489193 /* oktan */,
 				BCA4F61F2EEC9530002504C6 /* oktanTests */,
+				BC6126FC2EECAB780025A96B /* OktanWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		BC5E9A932EE9D52800489193 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC6126FB2EECAB780025A96B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -196,6 +297,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC6126F92EECAB780025A96B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BCA4F61C2EEC9530002504C6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -206,6 +314,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		BC6127122EECAB7A0025A96B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC6126FC2EECAB780025A96B /* OktanWidgetsExtension */;
+			targetProxy = BC6127112EECAB7A0025A96B /* PBXContainerItemProxy */;
+		};
 		BCA4F6252EEC9530002504C6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC5E9A942EE9D52800489193 /* oktan */;
@@ -401,6 +514,66 @@
 			};
 			name = Release;
 		};
+		BC6127152EECAB7A0025A96B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 23BJ9QDJAH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OktanWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OktanWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FU.oktan.OktanWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BC6127162EECAB7A0025A96B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 23BJ9QDJAH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OktanWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OktanWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FU.oktan.OktanWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		BCA4F6262EEC9530002504C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -460,6 +633,15 @@
 			buildConfigurations = (
 				BC5E9AA12EE9D52900489193 /* Debug */,
 				BC5E9AA22EE9D52900489193 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC6127142EECAB7A0025A96B /* Build configuration list for PBXNativeTarget "OktanWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC6127152EECAB7A0025A96B /* Debug */,
+				BC6127162EECAB7A0025A96B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
