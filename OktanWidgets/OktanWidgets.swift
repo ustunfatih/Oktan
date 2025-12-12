@@ -3,18 +3,15 @@ import SwiftUI
 import SwiftData
 
 struct QuickStatsProvider: TimelineProvider {
-    @MainActor
     func placeholder(in context: Context) -> QuickStatsEntry {
         QuickStatsEntry(date: Date(), efficiency: "8.5 L/100km", lastFillup: "2 days ago", cost: "50.00")
     }
 
-    @MainActor
     func getSnapshot(in context: Context, completion: @escaping (QuickStatsEntry) -> ()) {
         let entry = QuickStatsEntry(date: Date(), efficiency: "8.5 L/100km", lastFillup: "Today", cost: "50.00")
         completion(entry)
     }
 
-    @MainActor
     func getTimeline(in context: Context, completion: @escaping (Timeline<QuickStatsEntry>) -> ()) {
         let entry = fetchData()
         // Refresh every hour
@@ -23,14 +20,16 @@ struct QuickStatsProvider: TimelineProvider {
         completion(timeline)
     }
     
-    @MainActor
     private func fetchData() -> QuickStatsEntry {
         do {
             // Attempt to create container. 
             // Note: For actual data sharing, App Groups must be configured.
             let container = try DataContainer.create(inMemory: false)
+            // Create a background context
+            let context = ModelContext(container)
+            
             let descriptor = FetchDescriptor<FuelEntrySD>(sortBy: [SortDescriptor(\.date, order: .reverse)])
-            let entries = try container.mainContext.fetch(descriptor)
+            let entries = try context.fetch(descriptor)
             
             if let last = entries.first {
                 let eff = last.efficiency > 0 ? String(format: "%.1f L/100km", last.efficiency) : "—"

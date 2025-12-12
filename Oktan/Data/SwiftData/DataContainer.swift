@@ -90,18 +90,4 @@ enum DataContainer {
     }
 }
 
-// MARK: - Environment Key
 
-/// Custom environment key for the SwiftData model context
-/// This allows views to access the context via @Environment
-struct ModelContextKey: EnvironmentKey {
-    @MainActor
-    static let defaultValue: ModelContext? = nil
-}
-
-extension EnvironmentValues {
-    var swiftDataContext: ModelContext? {
-        get { self[ModelContextKey.self] }
-        set { self[ModelContextKey.self] = newValue }
-    }
-}
