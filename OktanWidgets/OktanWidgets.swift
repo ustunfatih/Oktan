@@ -119,7 +119,7 @@ enum QuickStatsWidgetModule {
             }
             .configurationDisplayName("Quick Stats")
             .description("View your latest fuel statistics at a glance.")
-            .supportedFamilies([.systemSmall])
+            .supportedFamilies([.systemSmall, .systemMedium])
         }
     }
 }
