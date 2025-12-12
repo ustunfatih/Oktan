@@ -249,6 +249,13 @@ Strengthen the codebase before adding major features.
 - [ ] Privacy policy URL
 - [ ] Support URL
 
+## 🚀 Future "Killer" Features
+- [ ] **Smart Refuel Detection**:
+    - [ ] Detect CarPlay disconnection (indicating car turned off).
+    - [ ] Check GPS location against known Gas Station POIs.
+    - [ ] Send local notification: "At a gas station? Tap to log."
+    - [ ] Requires "Always On" Location permission strategy.
+
 ### 11.3 Technical (Deferred)
 - [ ] Archive & upload to App Store Connect
 - [ ] TestFlight beta testing
