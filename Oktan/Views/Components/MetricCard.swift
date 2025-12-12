@@ -22,7 +22,7 @@ struct MetricCard: View {
                     .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .glassCard()
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title). \(value). \(trend ?? "")")

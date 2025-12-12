@@ -5,6 +5,7 @@ struct ReportsView: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(AppSettings.self) private var settings
     @State private var showingExportSheet = false
+    @State private var showingPDFAlert = false
     @State private var csvFileURL: URL?
     @State private var selectedTab: ReportTab = .overview
     
@@ -63,6 +64,11 @@ struct ReportsView: View {
                 if let url = csvFileURL {
                     ShareSheet(items: [url])
                 }
+            }
+            .alert("PDF Export", isPresented: $showingPDFAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("PDF export will be available in the next update. Please use CSV export for now.")
             }
         }
     }
@@ -264,7 +270,7 @@ struct ReportsView: View {
         switch mode {
         case .eco: return DesignSystem.ColorPalette.successGreen
         case .normal: return DesignSystem.ColorPalette.primaryBlue
-        case .sport: return DesignSystem.ColorPalette.warningOrange
+        case .sport: return DesignSystem.ColorPalette.errorRed
         }
     }
     
@@ -291,7 +297,7 @@ struct ReportsView: View {
                 .tint(DesignSystem.ColorPalette.primaryBlue)
                 .disabled(repository.entries.isEmpty)
                 
-                Button(action: {}) {
+                Button(action: { showingPDFAlert = true }) {
                     VStack(spacing: DesignSystem.Spacing.small) {
                         Image(systemName: "doc.richtext")
                             .font(.title2)
@@ -303,7 +309,6 @@ struct ReportsView: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(DesignSystem.ColorPalette.deepPurple)
-                .disabled(true) // Coming soon
             }
             
             if repository.entries.isEmpty {

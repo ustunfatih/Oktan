@@ -82,8 +82,9 @@ struct OktanApp: App {
                     .errorAlert(errorHandler)
                     .opacity(showSplash ? 0 : 1)
                     .modelContainer(modelContainer)
+                    .preferredColorScheme(appSettings.theme.colorScheme)
                 
-                if showSplash && appSettings.showSplashAnimation {
+                if showSplash {
                     SplashView()
                         .transition(.opacity)
                 }
@@ -96,12 +97,8 @@ struct OktanApp: App {
                 authManager.checkCredentialState()
                 
                 // Dismiss splash after animation completes
-                if appSettings.showSplashAnimation {
-                    try? await Task.sleep(for: .seconds(2.0))
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        showSplash = false
-                    }
-                } else {
+                try? await Task.sleep(for: .seconds(2.0))
+                withAnimation(.easeInOut(duration: 0.5)) {
                     showSplash = false
                 }
             }

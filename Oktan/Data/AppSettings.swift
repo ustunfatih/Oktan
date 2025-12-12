@@ -68,7 +68,30 @@ final class AppSettings {
         ("SAR", "Saudi Riyal", "﷼")
     ]
     
-    // MARK: - Properties
+    enum AppTheme: String, CaseIterable, Identifiable {
+        case system = "system"
+        case light = "light"
+        case dark = "dark"
+        
+        var id: String { rawValue }
+        var displayName: String {
+            switch self {
+            case .system: return String(localized: "System Default")
+            case .light: return "Light"
+            case .dark: return "Dark"
+            }
+        }
+        
+        var colorScheme: ColorScheme? {
+            switch self {
+            case .system: return nil
+            case .light: return .light
+            case .dark: return .dark
+            }
+        }
+    }
+    
+    // MARK: - Selected Units
     
     var currencyCode: String {
         didSet { UserDefaults.standard.set(currencyCode, forKey: "currencyCode") }
@@ -86,8 +109,8 @@ final class AppSettings {
         didSet { UserDefaults.standard.set(efficiencyUnit.rawValue, forKey: "efficiencyUnit") }
     }
     
-    var showSplashAnimation: Bool {
-        didSet { UserDefaults.standard.set(showSplashAnimation, forKey: "showSplashAnimation") }
+    var theme: AppTheme {
+        didSet { UserDefaults.standard.set(theme.rawValue, forKey: "appTheme") }
     }
     
     var appLanguage: AppLanguage {
@@ -104,7 +127,7 @@ final class AppSettings {
         self.distanceUnit = DistanceUnit(rawValue: UserDefaults.standard.string(forKey: "distanceUnit") ?? "") ?? .kilometers
         self.volumeUnit = VolumeUnit(rawValue: UserDefaults.standard.string(forKey: "volumeUnit") ?? "") ?? .liters
         self.efficiencyUnit = EfficiencyUnit(rawValue: UserDefaults.standard.string(forKey: "efficiencyUnit") ?? "") ?? .litersPer100km
-        self.showSplashAnimation = UserDefaults.standard.object(forKey: "showSplashAnimation") as? Bool ?? true
+        self.theme = AppTheme(rawValue: UserDefaults.standard.string(forKey: "appTheme") ?? "") ?? .system
         self.appLanguage = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system
     }
     

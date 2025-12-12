@@ -59,7 +59,11 @@ struct SettingsView: View {
                 
                 // Appearance Section
                 Section("Appearance") {
-                    Toggle("Show splash animation", isOn: $settings.showSplashAnimation)
+                    Picker("Theme", selection: $settings.theme) {
+                        ForEach(AppSettings.AppTheme.allCases) { theme in
+                            Text(theme.displayName).tag(theme)
+                        }
+                    }
                 }
                 
                 // Notifications Section

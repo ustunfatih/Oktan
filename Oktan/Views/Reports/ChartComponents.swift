@@ -261,7 +261,7 @@ struct DriveModeComparisonChart: View {
     private func colorFor(mode: String) -> Color {
         switch mode {
         case "Eco": return DesignSystem.ColorPalette.successGreen
-        case "Sport": return DesignSystem.ColorPalette.warningOrange
+        case "Sport": return DesignSystem.ColorPalette.errorRed
         default: return DesignSystem.ColorPalette.primaryBlue
         }
     }
