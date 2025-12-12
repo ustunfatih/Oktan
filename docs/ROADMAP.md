@@ -115,19 +115,29 @@ Strengthen the codebase before adding major features.
 
 ---
 
-## Phase 6: Data Import 📥
-**Priority: MEDIUM** | **Status: PENDING**
+## Phase 6: Data Import 📥 ✅
+**Priority: MEDIUM** | **Status: COMPLETE**
 
-### 6.1 CSV Import
-- [ ] Import from CSV files
-- [ ] Field mapping UI
-- [ ] Duplicate detection
-- [ ] Validation with preview
+### 6.1 CSV Import ✅
+- [x] Import from CSV files with file picker
+- [x] Smart field mapping with auto-suggestions
+- [x] Duplicate detection (by date)
+- [x] Preview validation before import
+- [x] Step-by-step import wizard UI
+- [x] Multiple date format support
+- [x] Comma/period decimal separator options
+- [x] Currency symbol stripping
+- [x] Unit tests for import service
 
-### 6.2 Migration from Other Apps
-- [ ] Research common fuel tracking app export formats
-- [ ] Implement parsers for popular formats
-- [ ] Guided import wizard
+### 6.2 Migration Support ✅
+- [x] Turkish and English header recognition
+- [x] Common fuel app export format compatibility
+- [x] Guided import with progress indicator
+
+> **Import Files:**
+> - `CSVImportService.swift` - Parsing, mapping, and import logic
+> - `CSVImportView.swift` - Step-by-step import wizard
+> - `CSVImportServiceTests.swift` - Comprehensive unit tests
 
 ---
 

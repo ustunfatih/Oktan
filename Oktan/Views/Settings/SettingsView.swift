@@ -4,6 +4,7 @@ struct SettingsView: View {
     @Bindable var settings: AppSettings
     @State private var showingAbout = false
     @State private var showingLanguageNote = false
+    @State private var showingCSVImport = false
     
     var body: some View {
         NavigationStack {
@@ -62,12 +63,20 @@ struct SettingsView: View {
                 }
                 
                 // Data Section
-                Section("Data") {
+                Section {
+                    Button(action: { showingCSVImport = true }) {
+                        Label("Import from CSV", systemImage: "square.and.arrow.down")
+                    }
+                    
                     NavigationLink {
                         DataManagementView()
                     } label: {
                         Label("Data Management", systemImage: "externaldrive")
                     }
+                } header: {
+                    Text("Data")
+                } footer: {
+                    Text("Import data from other fuel tracking apps or manage your existing data.")
                 }
                 
                 // About Section
@@ -96,6 +105,9 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .sheet(isPresented: $showingAbout) {
                 AboutView()
+            }
+            .sheet(isPresented: $showingCSVImport) {
+                CSVImportView()
             }
             .alert("Restart Required", isPresented: $showingLanguageNote) {
                 Button("OK", role: .cancel) {}
