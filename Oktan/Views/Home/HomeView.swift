@@ -183,10 +183,12 @@ struct HomeView: View {
                 Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
                     .font(.system(size: 48))
                     .foregroundStyle(.white.opacity(0.3))
+                    .accessibilityHidden(true)
             }
             
             Divider()
                 .background(.white.opacity(0.3))
+                .accessibilityHidden(true)
             
             HStack(spacing: DesignSystem.Spacing.xlarge) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -221,6 +223,11 @@ struct HomeView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large, style: .continuous))
         .shadow(color: DesignSystem.ColorPalette.primaryBlue.opacity(0.3), radius: 12, x: 0, y: 6)
+        // Accessibility
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Fuel summary")
+        .accessibilityValue("Total distance \(settings.formatDistance(summary.totalDistance)), total spent \(settings.formatCost(summary.totalCost)), \(repository.entries.count) fill-ups")
+        .accessibilityIdentifier(AccessibilityID.homeHeroCard)
     }
     
     // MARK: - Quick Stats
@@ -314,6 +321,7 @@ private struct StatCard: View {
             HStack {
                 Image(systemName: icon)
                     .foregroundStyle(color)
+                    .accessibilityHidden(true)
                 Text(title)
                     .font(.subheadline)
                     .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
@@ -329,6 +337,10 @@ private struct StatCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassCard()
+        // Accessibility
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title) efficiency")
+        .accessibilityValue("\(value), \(subtitle)")
     }
 }
 
@@ -361,6 +373,11 @@ private struct RecentEntryRow: View {
         .padding(DesignSystem.Spacing.medium)
         .background(DesignSystem.ColorPalette.glassTint.opacity(0.5))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium, style: .continuous))
+        // Accessibility
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Fill-up on \(AccessibilityHelper.speakableDate(entry.date)) at \(entry.gasStation)")
+        .accessibilityValue("\(settings.formatCost(entry.totalCost))" + (entry.litersPer100KM.map { ", efficiency \(settings.formatEfficiency($0))" } ?? ""))
+        .accessibilityIdentifier(AccessibilityID.trackingEntryRow)
     }
 }
 

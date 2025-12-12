@@ -25,6 +25,11 @@ struct OktanApp: App {
     /// Legacy car repository for fallback
     @State private var legacyCarRepository = CarRepository()
     
+    // MARK: - Services
+    
+    /// Global error handler
+    @State private var errorHandler = ErrorHandler()
+    
     // MARK: - Other State
     
     @State private var appSettings = AppSettings()
@@ -61,6 +66,8 @@ struct OktanApp: App {
                     .environment(carRepository ?? legacyCarRepository)
                     .environment(appSettings)
                     .environment(authManager)
+                    .environment(errorHandler)
+                    .errorAlert(errorHandler)
                     .opacity(showSplash ? 0 : 1)
                     .modelContainer(modelContainer)
                 

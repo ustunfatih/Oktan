@@ -29,42 +29,62 @@ struct FuelEntryFormView: View {
                 Section("Fill-up") {
                     DatePicker("Date", selection: $date, displayedComponents: [.date])
                         .accessibilityLabel("Purchase date")
+                        .accessibilityHint("Select the date of your fill-up")
+                        .accessibilityIdentifier(AccessibilityID.formDatePicker)
 
                     TextField("Liters", text: $liters)
                         .keyboardType(.decimalPad)
                         .accessibilityLabel("Total liters purchased")
+                        .accessibilityHint("Enter the amount of fuel in liters")
+                        .accessibilityIdentifier(AccessibilityID.formLitersField)
 
                     TextField("Price per liter", text: $pricePerLiter)
                         .keyboardType(.decimalPad)
+                        .accessibilityLabel("Price per liter")
+                        .accessibilityHint("Enter the cost per liter")
+                        .accessibilityIdentifier(AccessibilityID.formPriceField)
 
                     TextField("Gas station", text: $gasStation)
                         .textInputAutocapitalization(.words)
+                        .accessibilityLabel("Gas station name")
+                        .accessibilityHint("Enter the name of the gas station")
+                        .accessibilityIdentifier(AccessibilityID.formStationField)
 
                     Picker("Drive mode", selection: $driveMode) {
                         ForEach(FuelEntry.DriveMode.allCases) { mode in
                             Text(mode.rawValue).tag(mode)
                         }
                     }
+                    .accessibilityHint("Select how you drove, such as city, highway, or mixed")
 
                     Toggle("Full refill", isOn: $isFull)
+                        .accessibilityHint("Turn on if you filled the tank completely")
                 }
 
                 Section("Odometer") {
                     TextField("Start", text: $odometerStart)
                         .keyboardType(.numberPad)
+                        .accessibilityLabel("Odometer start reading")
+                        .accessibilityHint("Enter the odometer reading at the start of this tank")
+                    
                     TextField("End", text: $odometerEnd)
                         .keyboardType(.numberPad)
+                        .accessibilityLabel("Odometer end reading")
+                        .accessibilityHint("Enter the current odometer reading")
                 }
 
                 Section("Notes") {
                     TextField("Optional notes (e.g., AC on, cargo)", text: $notes)
                         .textInputAutocapitalization(.sentences)
+                        .accessibilityLabel("Notes")
+                        .accessibilityHint("Add optional notes about driving conditions")
                 }
 
                 if let message = errorMessage {
                     Section {
                         Text(message)
                             .foregroundStyle(DesignSystem.ColorPalette.errorRed)
+                            .accessibilityLabel("Error: \(message)")
                     }
                 }
             }
@@ -74,6 +94,7 @@ struct FuelEntryFormView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close", action: { dismiss() })
+                        .accessibilityIdentifier(AccessibilityID.formCloseButton)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(action: save) {
@@ -81,6 +102,8 @@ struct FuelEntryFormView: View {
                     }
                     .tint(DesignSystem.ColorPalette.primaryBlue)
                     .disabled(!isValidForm)
+                    .accessibilityLabel(isValidForm ? "Save fill-up" : "Save (disabled, complete required fields)")
+                    .accessibilityIdentifier(AccessibilityID.formSaveButton)
                 }
             }
             .onAppear(perform: setupForm)
@@ -147,7 +170,13 @@ struct FuelEntryFormView: View {
             repository.update(entry)
         } else {
             guard repository.add(entry) else {
-                errorMessage = "The entry could not be saved. Check odometer values and required fields."
+                // Show specific error from repository if available
+                if let error = repository.lastError {
+                    errorMessage = error.errorDescription
+                    repository.clearError()
+                } else {
+                    errorMessage = "The entry could not be saved. Check odometer values and required fields."
+                }
                 return
             }
         }

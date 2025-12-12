@@ -48,17 +48,36 @@ Strengthen the codebase before adding major features.
 > - `DataContainer.swift` - Schema and container configuration
 > - `DataMigrationService.swift` - Handles JSON → SwiftData migration
 
-### 4.3 Error Handling
-- [ ] Create centralized error types (OktanError enum)
-- [ ] Add user-friendly error alerts
-- [ ] Handle network errors gracefully
-- [ ] Add retry mechanisms where appropriate
+### 4.3 Error Handling ✅
+- [x] Create centralized error types (OktanError enum)
+- [x] Add user-friendly error alerts with ErrorHandler
+- [x] Handle network errors gracefully (URL error conversion)
+- [x] Add retry mechanisms for recoverable errors
+- [x] ErrorBannerView and ErrorStateView UI components
+- [x] Unit tests for error handling
 
-### 4.4 Accessibility
-- [ ] Full VoiceOver audit and improvements
-- [ ] Dynamic Type testing and fixes
-- [ ] Ensure ≥44pt touch targets throughout
-- [ ] Add accessibility labels where missing
+> **Error Handling Files:**
+> - `OktanError.swift` - Comprehensive error enum with localized descriptions
+> - `ErrorHandler.swift` - Error service with alerts, retry, and UI components
+> - `ErrorHandlingTests.swift` - Unit tests
+
+### 4.4 Accessibility ✅
+- [x] Full VoiceOver audit and improvements
+- [x] Dynamic Type support (max accessibility3)
+- [x] ≥44pt touch targets for all buttons
+- [x] Comprehensive accessibility labels and hints
+- [x] Accessibility identifiers for UI testing
+- [x] Speakable number/currency/date formatters
+- [x] Decorative elements hidden from VoiceOver
+
+> **Accessibility Files:**
+> - `Accessibility.swift` - View extensions, helpers, and identifiers
+>
+> **Key Improvements:**
+> - HomeView: Hero card, stat cards, entry rows
+> - TrackingView: Add button, entry list, edit/delete buttons
+> - FuelEntryFormView: All form fields with labels and hints
+> - Error states: Error messages announced to VoiceOver
 
 ---
 

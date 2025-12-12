@@ -25,7 +25,9 @@ struct TrackingView: View {
                             .font(.headline)
                     }
                     .tint(DesignSystem.ColorPalette.primaryBlue)
-                    .accessibilityIdentifier("add-fillup-button")
+                    .accessibilityLabel("Add new fill-up")
+                    .accessibilityHint("Opens a form to log a new refuel")
+                    .accessibilityIdentifier(AccessibilityID.trackingAddButton)
                 }
             }
             .sheet(isPresented: $isPresentingForm) {
@@ -67,6 +69,7 @@ struct TrackingView: View {
                         )
                     }
                 }
+                .accessibilityIdentifier(AccessibilityID.trackingEntryList)
             }
         }
     }
@@ -95,6 +98,22 @@ private struct FuelEntryRow: View {
     let onDelete: () -> Void
 
     @State private var showDeleteConfirmation = false
+    
+    /// Accessibility summary for VoiceOver
+    private var accessibilitySummary: String {
+        var parts: [String] = []
+        parts.append("\(AccessibilityHelper.speakableDate(entry.date)) at \(entry.gasStation)")
+        parts.append("\(settings.formatVolume(entry.totalLiters)) of fuel")
+        parts.append("cost \(settings.formatCost(entry.totalCost))")
+        if let distance = entry.distance {
+            parts.append("distance \(settings.formatDistance(distance))")
+        }
+        if let efficiency = entry.litersPer100KM {
+            parts.append("efficiency \(settings.formatEfficiency(efficiency))")
+        }
+        parts.append("\(entry.driveMode.rawValue) mode")
+        return parts.joined(separator: ", ")
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
@@ -136,13 +155,17 @@ private struct FuelEntryRow: View {
                     .clipShape(Capsule())
             }
 
-            // Action buttons
+            // Action buttons with proper touch targets
             HStack(spacing: DesignSystem.Spacing.medium) {
                 Button(action: onEdit) {
                     Label("Edit", systemImage: "pencil")
                         .font(.subheadline)
                 }
                 .tint(DesignSystem.ColorPalette.primaryBlue)
+                .accessibilityLabel("Edit this fill-up")
+                .accessibilityHint("Opens editor for this entry")
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
 
                 Spacer()
 
@@ -151,10 +174,18 @@ private struct FuelEntryRow: View {
                         .font(.subheadline)
                 }
                 .tint(DesignSystem.ColorPalette.errorRed)
+                .accessibilityLabel("Delete this fill-up")
+                .accessibilityHint("Removes this entry permanently")
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
             }
             .padding(.top, DesignSystem.Spacing.xsmall)
         }
         .glassCard()
+        // Card-level accessibility
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Fill-up entry")
+        .accessibilityValue(accessibilitySummary)
         .confirmationDialog("Delete this fill-up?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete", role: .destructive, action: onDelete)
             Button("Cancel", role: .cancel) {}
@@ -179,6 +210,8 @@ private struct FuelEntryRow: View {
             Text(value)
                 .font(.headline)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(value)")
     }
 }
 

@@ -6,6 +6,9 @@ import SwiftData
 final class FuelRepository: ObservableObject {
     @Published private(set) var entries: [FuelEntry] = []
     
+    /// Last error that occurred (for UI display)
+    @Published private(set) var lastError: OktanError?
+    
     // MARK: - Storage Mode
     
     private enum StorageMode {
@@ -32,6 +35,11 @@ final class FuelRepository: ObservableObject {
     init(modelContext: ModelContext) {
         self.storageMode = .swiftData(context: modelContext)
     }
+    
+    /// Clears the last error
+    func clearError() {
+        lastError = nil
+    }
 
     func bootstrapIfNeeded() {
         loadEntries()
@@ -44,7 +52,11 @@ final class FuelRepository: ObservableObject {
 
     @discardableResult
     func add(_ entry: FuelEntry) -> Bool {
-        guard validate(entry) else { return false }
+        // Validate entry
+        if let validationError = validateWithError(entry) {
+            lastError = validationError
+            return false
+        }
         
         switch storageMode {
         case .swiftData(let context):
@@ -53,7 +65,7 @@ final class FuelRepository: ObservableObject {
             do {
                 try context.save()
             } catch {
-                print("Failed to save: \(error)")
+                lastError = .saveFailed(reason: error.localizedDescription)
                 return false
             }
         case .json:
@@ -146,9 +158,21 @@ final class FuelRepository: ObservableObject {
     }
 
     private func validate(_ entry: FuelEntry) -> Bool {
-        guard entry.totalLiters > 0, entry.pricePerLiter > 0 else { return false }
-        if let start = entry.odometerStart, let end = entry.odometerEnd, end < start { return false }
-        return true
+        validateWithError(entry) == nil
+    }
+    
+    /// Validates an entry and returns a specific error if invalid
+    private func validateWithError(_ entry: FuelEntry) -> OktanError? {
+        if entry.totalLiters <= 0 {
+            return .validationFailed(field: "Total Liters", reason: "Must be greater than zero")
+        }
+        if entry.pricePerLiter <= 0 {
+            return .validationFailed(field: "Price per Liter", reason: "Must be greater than zero")
+        }
+        if let start = entry.odometerStart, let end = entry.odometerEnd, end < start {
+            return .validationFailed(field: "Odometer", reason: "End reading must be greater than start")
+        }
+        return nil
     }
 
     /// Loads entries based on storage mode
