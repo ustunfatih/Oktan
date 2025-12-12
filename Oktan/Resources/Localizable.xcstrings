@@ -864,9 +864,6 @@
     "Get a gentle nudge when you haven't logged entries in a while." : {
 
     },
-    "Get advanced insights and keep your data safe." : {
-
-    },
     "Get reminders to log your fill-ups and track your fuel efficiency." : {
 
     },
@@ -1209,6 +1206,9 @@
     "Oktan" : {
       "comment" : "App name - not translated"
     },
+    "Oktan Pro Active" : {
+
+    },
     "on average" : {
 
     },
@@ -1408,9 +1408,6 @@
           }
         }
       }
-    },
-    "Restore Purchases" : {
-
     },
     "Retry" : {
 
@@ -1625,9 +1622,6 @@
           }
         }
       }
-    },
-    "Subscribe for $4.99/year" : {
-
     },
     "Supported columns:" : {
 
@@ -1872,7 +1866,7 @@
     "Unknown status" : {
 
     },
-    "Unlock Oktan Premium" : {
+    "Unlock Oktan Pro" : {
 
     },
     "Unlock Premium" : {

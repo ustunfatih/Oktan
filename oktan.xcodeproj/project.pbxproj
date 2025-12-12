@@ -9,11 +9,9 @@
 /* Begin PBXBuildFile section */
 		BC6127002EECAB780025A96B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC6126FF2EECAB780025A96B /* WidgetKit.framework */; };
 		BC6127022EECAB780025A96B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC6127012EECAB780025A96B /* SwiftUI.framework */; };
-		BC6127132EECAB7A0025A96B /* OktanWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BC61271F2EECB0590025A96B /* ReceiptParser in Frameworks */ = {isa = PBXBuildFile; productRef = BC61271E2EECB0590025A96B /* ReceiptParser */; };
 		BC6127212EECB0590025A96B /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = BC6127202EECB0590025A96B /* RevenueCat */; };
 		BC6127232EECB0590025A96B /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = BC6127222EECB0590025A96B /* RevenueCatUI */; };
-		BC6127252EECB0590025A96B /* RevenueCat_CustomEntitlementComputation in Frameworks */ = {isa = PBXBuildFile; productRef = BC6127242EECB0590025A96B /* RevenueCat_CustomEntitlementComputation */; };
+		BC6127292EECB9330025A96B /* OktanWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,7 +38,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				BC6127132EECAB7A0025A96B /* OktanWidgetsExtension.appex in Embed Foundation Extensions */,
+				BC6127292EECB9330025A96B /* OktanWidgetsExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -115,9 +113,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC6127212EECB0590025A96B /* RevenueCat in Frameworks */,
-				BC61271F2EECB0590025A96B /* ReceiptParser in Frameworks */,
 				BC6127232EECB0590025A96B /* RevenueCatUI in Frameworks */,
-				BC6127252EECB0590025A96B /* RevenueCat_CustomEntitlementComputation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,10 +188,8 @@
 			);
 			name = oktan;
 			packageProductDependencies = (
-				BC61271E2EECB0590025A96B /* ReceiptParser */,
 				BC6127202EECB0590025A96B /* RevenueCat */,
 				BC6127222EECB0590025A96B /* RevenueCatUI */,
-				BC6127242EECB0590025A96B /* RevenueCat_CustomEntitlementComputation */,
 			);
 			productName = oktan;
 			productReference = BC5E9A952EE9D52800489193 /* oktan.app */;
@@ -697,11 +691,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		BC61271E2EECB0590025A96B /* ReceiptParser */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
-			productName = ReceiptParser;
-		};
 		BC6127202EECB0590025A96B /* RevenueCat */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
@@ -711,11 +700,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCatUI;
-		};
-		BC6127242EECB0590025A96B /* RevenueCat_CustomEntitlementComputation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
-			productName = RevenueCat_CustomEntitlementComputation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
