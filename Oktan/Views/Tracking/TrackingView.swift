@@ -116,73 +116,92 @@ private struct FuelEntryRow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
-            HStack {
+        VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
+            // Header: Date + Cost + Menu
+            HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(entry.date.formatted(date: .abbreviated, time: .omitted))
                         .font(.headline)
+                        .foregroundStyle(DesignSystem.ColorPalette.label)
+                    
                     Text(entry.gasStation)
                         .font(.subheadline)
                         .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
                 }
+                
                 Spacer()
-                Text(entry.driveMode.rawValue)
-                    .font(.caption)
-                    .padding(.horizontal, DesignSystem.Spacing.small)
-                    .padding(.vertical, 6)
-                    .background(driveModeColor.opacity(0.2))
-                    .foregroundStyle(driveModeColor)
-                    .clipShape(Capsule())
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(settings.formatCost(entry.totalCost))
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(DesignSystem.ColorPalette.label)
+                    
+                    Menu {
+                        Button(action: onEdit) {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        Button(role: .destructive, action: { showDeleteConfirmation = true }) {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 20))
+                            .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
+                    }
+                }
             }
-
-            HStack(spacing: DesignSystem.Spacing.medium) {
+            
+            // Divider
+            Divider()
+                .overlay(DesignSystem.ColorPalette.glassTint)
+            
+            // Stats Grid
+            HStack(spacing: 0) {
+                // Liters
+                statColumn(
+                    title: "Fuel",
+                    value: settings.formatVolume(entry.totalLiters),
+                    icon: "fuelpump.fill",
+                    color: DesignSystem.ColorPalette.primaryBlue
+                )
+                
+                Spacer()
+                
+                // Distance (if available)
                 if let distance = entry.distance {
-                    valueChip(title: "Distance", value: settings.formatDistance(distance))
+                    statColumn(
+                        title: "Distance",
+                        value: settings.formatDistance(distance),
+                        icon: "road.lanes",
+                        color: DesignSystem.ColorPalette.deepPurple
+                    )
+                    Spacer()
                 }
-                valueChip(title: "Fuel", value: settings.formatVolume(entry.totalLiters))
-                Text(settings.formatCost(entry.totalCost))
-                    .font(.headline)
-                    .foregroundStyle(DesignSystem.ColorPalette.label)
-            }
-
-            if let lPer100 = entry.litersPer100KM {
-                Text(settings.formatEfficiency(lPer100))
-                    .font(.footnote)
-                    .foregroundStyle(DesignSystem.ColorPalette.successGreen)
-                    .padding(.horizontal, DesignSystem.Spacing.small)
-                    .padding(.vertical, 4)
-                    .background(DesignSystem.ColorPalette.successGreen.opacity(0.1))
-                    .clipShape(Capsule())
-            }
-
-            // Action buttons with proper touch targets
-            HStack(spacing: DesignSystem.Spacing.medium) {
-                Button(action: onEdit) {
-                    Label("Edit", systemImage: "pencil")
-                        .font(.subheadline)
+                
+                // Efficiency (if available)
+                if let lPer100 = entry.litersPer100KM {
+                    statColumn(
+                        title: "Efficiency",
+                        value: settings.formatEfficiency(lPer100),
+                        icon: "leaf.fill",
+                        color: DesignSystem.ColorPalette.successGreen
+                    )
+                } else {
+                    // Drive Mode fallback if no efficiency
+                    statColumn(
+                        title: "Mode",
+                        value: entry.driveMode.rawValue,
+                        icon: "steeringwheel",
+                        color: driveModeColor
+                    )
                 }
-                .tint(DesignSystem.ColorPalette.primaryBlue)
-                .accessibilityLabel("Edit this fill-up")
-                .accessibilityHint("Opens editor for this entry")
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
-
-                Spacer()
-
-                Button(action: { showDeleteConfirmation = true }) {
-                    Label("Delete", systemImage: "trash")
-                        .font(.subheadline)
-                }
-                .tint(DesignSystem.ColorPalette.errorRed)
-                .accessibilityLabel("Delete this fill-up")
-                .accessibilityHint("Removes this entry permanently")
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
             }
-            .padding(.top, DesignSystem.Spacing.xsmall)
         }
+        .padding(DesignSystem.Spacing.medium)
         .glassCard()
-        // Card-level accessibility
+        // Accessibility
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Fill-up entry")
         .accessibilityValue(accessibilitySummary)
@@ -202,16 +221,21 @@ private struct FuelEntryRow: View {
         }
     }
 
-    private func valueChip(title: String, value: String) -> some View {
+    private func statColumn(title: String, value: String, icon: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundStyle(color)
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+            }
             Text(value)
-                .font(.headline)
+                .font(.callout.weight(.medium))
+                .foregroundStyle(DesignSystem.ColorPalette.label)
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(title): \(value)")
+        .frame(minWidth: 80, alignment: .leading)
     }
 }
 
