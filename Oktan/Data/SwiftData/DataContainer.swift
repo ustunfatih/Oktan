@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 /// Configures the SwiftData container for the app
 /// Handles model registration, storage location, and iCloud sync preparation

@@ -153,8 +153,8 @@ enum DataMigrationService {
 // MARK: - Migration Result
 
 struct MigrationResult {
-    let fuelEntriesMigrated: Int
-    let carMigrated: Bool
+    var fuelEntriesMigrated: Int
+    var carMigrated: Bool
     let alreadyCompleted: Bool
     
     var description: String {
