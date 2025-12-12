@@ -2,16 +2,24 @@ import SwiftUI
 
 enum DesignSystem {
     enum ColorPalette {
-        static let primaryBlue = Color(hex: "007AFF")
-        static let deepPurple = Color(hex: "5856D6")
-        static let successGreen = Color(hex: "34C759")
-        static let warningOrange = Color(hex: "FF9500")
-        static let errorRed = Color(hex: "FF3B30")
-        static let label = Color(hex: "1D1D1F")
-        static let secondaryLabel = Color(hex: "6E6E73")
-        static let tertiaryLabel = Color(hex: "8E8E93")
-        static let background = Color(hex: "F5F5F7")
-        static let glassTint = Color(hex: "E8F4FD")
+        static let primaryBlue = Color.blue
+        static let deepPurple = Color.indigo
+        static let successGreen = Color.green
+        static let warningOrange = Color.orange
+        static let errorRed = Color.red
+        
+        static let label = Color.primary
+        static let secondaryLabel = Color.secondary
+        static let tertiaryLabel = Color(uiColor: .tertiaryLabel)
+        
+        static let background = Color(uiColor: .systemGroupedBackground)
+        
+        static var glassTint: Color {
+            Color("GlassTint") // We can't easily create asset, so let's use a conditional or system color
+            // Fallback to blue-ish tint that adapts?
+            // Actually, let's use a custom logic or simply .blue.opacity(0.1) for now
+            return Color.blue.opacity(0.1)
+        }
     }
 
     enum Spacing {

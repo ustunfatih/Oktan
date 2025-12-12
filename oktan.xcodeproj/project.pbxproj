@@ -66,6 +66,15 @@
 			);
 			target = BC6126FC2EECAB780025A96B /* OktanWidgetsExtension */;
 		};
+		BC61271A2EECAD9B0025A96B /* Exceptions for "oktan" folder in "OktanWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Data/SwiftData/CarSD.swift,
+				Data/SwiftData/DataContainer.swift,
+				Data/SwiftData/FuelEntrySD.swift,
+			);
+			target = BC6126FC2EECAB780025A96B /* OktanWidgetsExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -73,6 +82,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				BC5E9AC82EE9D5FB00489193 /* Exceptions for "oktan" folder in "oktan" target */,
+				BC61271A2EECAD9B0025A96B /* Exceptions for "oktan" folder in "OktanWidgetsExtension" target */,
 			);
 			path = oktan;
 			sourceTree = "<group>";

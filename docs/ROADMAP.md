@@ -191,35 +191,32 @@ Strengthen the codebase before adding major features.
 
 ---
 
-## Phase 9: iOS Widgets 📱
-**Priority: MEDIUM** | **Status: PENDING**
+## Phase 9: iOS Widgets 📱 ✅
+**Priority: MEDIUM** | **Status: COMPLETE**
 
-### 9.1 Widget Types (2-3)
-- [ ] **Quick Stats Widget** (Small)
+### 9.1 Widget Types (2-3) ✅
+- [x] **Quick Stats Widget** (Small)
   - Last fill-up date
-  - Recent efficiency
-- [ ] **Efficiency Widget** (Medium)
-  - Current efficiency trend
-  - Last 5 fill-ups average
-- [ ] **Summary Widget** (Large)
-  - Total distance/cost this month
-  - Efficiency chart mini-view
+  - Efficiency
+  - Cost
+- [ ] **Efficiency Widget** (Medium) (Deferred)
+- [ ] **Summary Widget** (Large) (Deferred)
 
-### 9.2 Implementation
-- [ ] Widget extension target
-- [ ] Shared data with main app
-- [ ] Widget configuration (if applicable)
+### 9.2 Implementation ✅
+- [x] Widget extension target setup (User manual step)
+- [x] Shared data with main app (DataContainer)
+- [x] Widget configuration (Static)
 
 ---
 
-## Phase 10: Dark Mode 🌙
-**Priority: LOW** | **Status: PENDING**
+## Phase 10: Dark Mode 🌙 ✅
+**Priority: LOW** | **Status: COMPLETE**
 
-### 10.1 Design System Updates
-- [ ] Dark color palette in DesignSystem.swift
-- [ ] Adaptive colors throughout
-- [ ] Glass card dark variants
-- [ ] Chart color adjustments
+### 10.1 Design System Updates ✅
+- [x] Dark color palette in DesignSystem.swift (Mapped to System Colors)
+- [x] Adaptive colors throughout
+- [x] Glass card dark variants (UltraThinMaterial)
+- [x] Chart color adjustments (System Colors)
 
 ### 10.2 Testing
 - [ ] All screens in dark mode
