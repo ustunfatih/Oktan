@@ -1,37 +1,36 @@
 import SwiftUI
-import StoreKit
+import RevenueCat
 
 @Observable
-final class PremiumManager {
-    var isPremium: Bool {
-        didSet {
-            UserDefaults.standard.set(isPremium, forKey: "isPremiumUser")
+class PremiumManager {
+    var isPremium = false
+    
+    init() {
+        // Initialize RevenueCat
+        Purchases.logLevel = .debug
+        Purchases.configure(withAPIKey: "test_HcxhrgEARdQuoUxajGLEasDwAGm")
+        
+        // Listen for subscription status changes
+        Task {
+            for await customerInfo in Purchases.shared.customerInfoStream {
+                await updatePremiumStatus(customerInfo)
+            }
         }
     }
     
-    init() {
-        self.isPremium = UserDefaults.standard.bool(forKey: "isPremiumUser")
+    @MainActor
+    func updatePremiumStatus(_ info: CustomerInfo) {
+        // Check for "Oktan Pro" entitlement
+        self.isPremium = info.entitlements["Oktan Pro"]?.isActive == true
     }
     
-    /// Simulates a purchase
-    func purchase() async throws {
-        // Mock purchase delay
-        try? await Task.sleep(for: .seconds(1))
-        isPremium = true
-    }
-    
+    /// Restores purchases (called manually if needed, though stream usually handles it)
     func restore() async {
-        // Mock restore
-        try? await Task.sleep(for: .seconds(1))
-        // In a real app, check receipt. For now, we assume restore just works if they acted premium before? 
-        // Or simplified: it just sets premium for demo purposes if we want. 
-        // But better to keep isPremium as is unless we have a logic.
-        // For development, purchasing sets it.
+        do {
+            let info = try await Purchases.shared.restorePurchases()
+            await updatePremiumStatus(info)
+        } catch {
+            print("Restore failed: \(error)")
+        }
     }
-    
-    #if DEBUG
-    func reset() {
-        isPremium = false
-    }
-    #endif
 }

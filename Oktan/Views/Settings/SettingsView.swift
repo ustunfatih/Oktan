@@ -2,13 +2,28 @@ import SwiftUI
 
 struct SettingsView: View {
     @Bindable var settings: AppSettings
+    @Environment(PremiumManager.self) private var premiumManager
     @State private var showingAbout = false
     @State private var showingLanguageNote = false
     @State private var showingCSVImport = false
+    @State private var showingPaywall = false
     
     var body: some View {
         NavigationStack {
             List {
+                // Premium Section
+                Section {
+                    if premiumManager.isPremium {
+                        Label("Oktan Pro Active", systemImage: "crown.fill")
+                            .foregroundStyle(DesignSystem.ColorPalette.deepPurple)
+                    } else {
+                        Button(action: { showingPaywall = true }) {
+                            Label("Unlock Oktan Pro", systemImage: "crown")
+                                .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
+                        }
+                    }
+                }
+                
                 // Language Section
                 Section {
                     Picker("Language", selection: $settings.appLanguage) {
@@ -114,6 +129,9 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .sheet(isPresented: $showingAbout) {
                 AboutView()
+            }
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
             }
             .sheet(isPresented: $showingCSVImport) {
                 CSVImportView()
