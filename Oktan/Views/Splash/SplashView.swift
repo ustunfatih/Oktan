@@ -4,62 +4,77 @@ struct SplashView: View {
     // Configuration for each oil drop
     struct DropConfig {
         let char: String
-        let offset: CGFloat       // X Position (Vertical fall, so startX = targetX)
+        let landX: CGFloat        // X Position where it lands (under Island)
+        let finalX: CGFloat       // X Position in the final word
         let size: CGFloat         // Size of the drop
         let delay: Double         // Start delay
-        let fallDuration: Double  // How fast it falls (Gravity/Viscosity illusion)
+        let formDuration: Double  // Time to form at top
+        let fallDuration: Double  // How fast it falls
     }
     
     // Configured for "oktan"
-    // Drops fall STRAIGT DOWN from the Island area.
-    // Spacing reduced slightly to keep them clustered under the island.
-    // o/a smaller, k/t/n larger.
+    // Drops fall from random spots under the Dynamic Island (approx width 120pt, so -60 to 60)
+    // Then expand to final word positions.
     let drops: [DropConfig] = [
-        DropConfig(char: "o", offset: -80, size: 18, delay: 0.1, fallDuration: 0.55),
-        DropConfig(char: "k", offset: -40, size: 26, delay: 0.6, fallDuration: 0.45), // Larger falls faster?
-        DropConfig(char: "t", offset: 0,   size: 28, delay: 0.3, fallDuration: 0.45),
-        DropConfig(char: "a", offset: 40,  size: 18, delay: 0.9, fallDuration: 0.55),
-        DropConfig(char: "n", offset: 80,  size: 26, delay: 0.5, fallDuration: 0.50)
+        DropConfig(char: "o", landX: -20, finalX: -90, size: 22, delay: 0.1, formDuration: 1.2, fallDuration: 0.60),
+        DropConfig(char: "k", landX: 10,  finalX: -45, size: 26, delay: 0.8, formDuration: 1.0, fallDuration: 0.45),
+        DropConfig(char: "t", landX: -5,  finalX: -5,  size: 28, delay: 0.4, formDuration: 1.4, fallDuration: 0.50),
+        DropConfig(char: "a", landX: 25,  finalX: 35,  size: 20, delay: 1.2, formDuration: 0.9, fallDuration: 0.55),
+        DropConfig(char: "n", landX: -15, finalX: 80,  size: 24, delay: 0.6, formDuration: 1.1, fallDuration: 0.48)
     ]
+    
+    @State private var expandToWord = false
     
     var body: some View {
         ZStack {
-            Color.white
+            // Off-white gradient background
+            LinearGradient(
+                colors: [Color.white, Color(uiColor: UIColor.systemGray6)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             GeometryReader { geometry in
                 let centerX = geometry.size.width / 2
                 let centerY = geometry.size.height / 2
                 
-                // Dynamic Island bottom is physically ~54pt from top.
-                // We use global coordinates now (ignoring safe area).
-                // startY = 55 places center at 55. Top of drop (height ~35) is at ~37, ensuring overlap.
+                // Dynamic Island bottom ~54pt. Start slightly higher so they emerge.
                 let startY: CGFloat = 55
                 
                 ForEach(drops.indices, id: \.self) { index in
                     let config = drops[index]
                     OilDropView(
                         config: config,
-                        xPosition: centerX + config.offset,
+                        centerX: centerX,
                         startY: startY,
-                        targetY: centerY
+                        targetY: centerY,
+                        expandToWord: expandToWord
                     )
                 }
             }
         }
-        .ignoresSafeArea()
+        .task {
+            // Wait for all drops to splash (max time approx 3.0s)
+            // Longest sequence: 'a' (1.2 delay + 0.9 form + 0.9 wait + 0.55 fall = ~3.55s)
+            try? await Task.sleep(for: .seconds(3.6))
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.7)) {
+                expandToWord = true
+            }
+        }
     }
 }
 
 struct OilDropView: View {
     let config: SplashView.DropConfig
-    let xPosition: CGFloat
+    let centerX: CGFloat
     let startY: CGFloat
     let targetY: CGFloat
+    let expandToWord: Bool
     
     // Animation States
-    // Start at top
     @State private var yPosition: CGFloat
-    @State private var dropScale: CGSize = CGSize(width: 0.1, height: 0.1) // Growing phase
+    @State private var dropScale: CGSize = CGSize(width: 0.1, height: 0.1)
     @State private var isSplashed = false
     
     // Letter & Splash States
@@ -68,12 +83,21 @@ struct OilDropView: View {
     @State private var splashScale: CGFloat = 0.5
     @State private var splashOpacity: Double = 0.8
     
-    init(config: SplashView.DropConfig, xPosition: CGFloat, startY: CGFloat, targetY: CGFloat) {
+    init(config: SplashView.DropConfig, centerX: CGFloat, startY: CGFloat, targetY: CGFloat, expandToWord: Bool) {
         self.config = config
-        self.xPosition = xPosition
+        self.centerX = centerX
         self.startY = startY
         self.targetY = targetY
+        self.expandToWord = expandToWord
         self._yPosition = State(initialValue: startY)
+    }
+    
+    var currentX: CGFloat {
+        if expandToWord {
+            return centerX + config.finalX
+        } else {
+            return centerX + config.landX
+        }
     }
     
     var body: some View {
@@ -83,8 +107,8 @@ struct OilDropView: View {
                 DropShape()
                     .fill(Color.black)
                     .frame(width: config.size, height: config.size * 1.5)
-                    .scaleEffect(dropScale, anchor: .top) // Grow from top
-                    .position(x: xPosition, y: yPosition)
+                    .scaleEffect(dropScale, anchor: .top)
+                    .position(x: centerX + config.landX, y: yPosition) // Falls straight down
             } else {
                 // IMPACT SPLASH
                 Circle()
@@ -92,58 +116,46 @@ struct OilDropView: View {
                     .frame(width: config.size, height: config.size)
                     .scaleEffect(splashScale)
                     .opacity(splashOpacity)
-                    .position(x: xPosition, y: targetY)
+                    .position(x: centerX + config.landX, y: targetY) // Splash stays where it landed
                 
-                // LETTER
+                // LETTER (Moves during expansion)
                 Text(config.char)
                     .font(.system(size: 60, weight: .black, design: .rounded))
                     .foregroundStyle(Color.black)
-                    .position(x: xPosition, y: targetY)
+                    .position(x: currentX, y: targetY)
                     .scaleEffect(letterScale)
                     .opacity(letterOpacity)
             }
         }
         .task {
-            // Sequence:
-            // 1. Wait Delay
-            // 2. Form (Grow) at Top
-            // 3. Fall (Gravity)
-            // 4. Splash
-            
             // 1. Delay
             if config.delay > 0 {
                 try? await Task.sleep(for: .seconds(config.delay))
             }
             
-            // 2. Form - "Swell" slowly
-            // Anchor is top, so it elongates down
-            withAnimation(.easeInOut(duration: 1.0)) {
+            // 2. Form (Grow)
+            withAnimation(.easeInOut(duration: config.formDuration)) {
                 dropScale = CGSize(width: 1.0, height: 1.0)
             }
-            
-            // Wait for full formation + Moment of suspense?
-            try? await Task.sleep(for: .seconds(0.9))
+            // Wait for form + suspense
+            try? await Task.sleep(for: .seconds(config.formDuration + 0.2))
             
             // 3. Fall
-            // EaseIn simulates gravity acceleration
             withAnimation(.easeIn(duration: config.fallDuration)) {
                 yPosition = targetY
             }
-            
-            // Wait for impact
-            // Note: Animation time is approximate, we sleep slightly less to trigger splash exactly on hit
             try? await Task.sleep(for: .seconds(config.fallDuration - 0.05))
             
             // 4. Impact
             isSplashed = true
             
-            // Splash Ring Expand & Fade
+            // Splash Animation
             withAnimation(.easeOut(duration: 0.4)) {
                 splashScale = 2.5
                 splashOpacity = 0.0
             }
             
-            // Letter Appear (No bounce/jump, just smooth scaling)
+            // Letter Appear
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 letterScale = 1.0
                 letterOpacity = 1.0
