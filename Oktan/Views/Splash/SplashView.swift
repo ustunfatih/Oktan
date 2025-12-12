@@ -25,15 +25,15 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             Color.white
-                .ignoresSafeArea()
             
             GeometryReader { geometry in
                 let centerX = geometry.size.width / 2
                 let centerY = geometry.size.height / 2
                 
-                // Dynamic Island is roughly Y=11 to Y=48.
-                // Start Y=25 ensures the drop sources from INSIDE the black area.
-                let startY: CGFloat = 25
+                // Dynamic Island bottom is physically ~54pt from top.
+                // We use global coordinates now (ignoring safe area).
+                // startY = 55 places center at 55. Top of drop (height ~35) is at ~37, ensuring overlap.
+                let startY: CGFloat = 55
                 
                 ForEach(drops.indices, id: \.self) { index in
                     let config = drops[index]
@@ -46,6 +46,7 @@ struct SplashView: View {
                 }
             }
         }
+        .ignoresSafeArea()
     }
 }
 
