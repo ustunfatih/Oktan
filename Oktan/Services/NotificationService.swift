@@ -1,5 +1,6 @@
 import Foundation
 import UserNotifications
+import UIKit
 
 /// Service for managing local notifications and reminders
 @MainActor

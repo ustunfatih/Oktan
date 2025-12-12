@@ -9,6 +9,7 @@ enum DesignSystem {
         static let errorRed = Color(hex: "FF3B30")
         static let label = Color(hex: "1D1D1F")
         static let secondaryLabel = Color(hex: "6E6E73")
+        static let tertiaryLabel = Color(hex: "8E8E93")
         static let background = Color(hex: "F5F5F7")
         static let glassTint = Color(hex: "E8F4FD")
     }
