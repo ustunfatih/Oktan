@@ -1,0 +1,88 @@
+import Foundation
+import SwiftData
+
+/// Configures the SwiftData container for the app
+/// Handles model registration, storage location, and iCloud sync preparation
+enum DataContainer {
+    
+    // MARK: - Schema
+    
+    /// All SwiftData models used in the app
+    static let schema = Schema([
+        FuelEntrySD.self,
+        CarSD.self
+    ])
+    
+    // MARK: - Configuration
+    
+    /// Default configuration for local storage
+    static var localConfiguration: ModelConfiguration {
+        ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            allowsSave: true
+        )
+    }
+    
+    /// In-memory configuration for testing and previews
+    static var inMemoryConfiguration: ModelConfiguration {
+        ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: true,
+            allowsSave: true
+        )
+    }
+    
+    // MARK: - Container Creation
+    
+    /// Creates the main model container for the app
+    /// - Parameter inMemory: Whether to use in-memory storage (for testing/previews)
+    /// - Returns: Configured ModelContainer
+    static func create(inMemory: Bool = false) throws -> ModelContainer {
+        let configuration = inMemory ? inMemoryConfiguration : localConfiguration
+        return try ModelContainer(for: schema, configurations: [configuration])
+    }
+    
+    /// Creates a container for SwiftUI previews with sample data
+    @MainActor
+    static func createPreviewContainer() throws -> ModelContainer {
+        let container = try create(inMemory: true)
+        let context = container.mainContext
+        
+        // Add sample fuel entries
+        for entry in SeedData.entries {
+            let sdEntry = FuelEntrySD(from: entry)
+            context.insert(sdEntry)
+        }
+        
+        // Add sample car
+        let sampleCar = CarSD(
+            make: "Toyota",
+            model: "Camry",
+            year: 2024,
+            tankCapacity: 60,
+            isSelected: true
+        )
+        context.insert(sampleCar)
+        
+        try context.save()
+        
+        return container
+    }
+}
+
+// MARK: - Environment Key
+
+/// Custom environment key for the SwiftData model context
+/// This allows views to access the context via @Environment
+struct ModelContextKey: EnvironmentKey {
+    @MainActor
+    static let defaultValue: ModelContext? = nil
+}
+
+extension EnvironmentValues {
+    var swiftDataContext: ModelContext? {
+        get { self[ModelContextKey.self] }
+        set { self[ModelContextKey.self] = newValue }
+    }
+}

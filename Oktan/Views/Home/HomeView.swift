@@ -3,10 +3,30 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(AppSettings.self) private var settings
-    @State private var carRepository = CarRepository()
+    
+    // CarRepository: try environment first, fallback to creating new instance
+    @Environment(CarRepository.self) private var envCarRepository: CarRepository?
+    @Environment(CarRepositorySD.self) private var envCarRepositorySD: CarRepositorySD?
+    @State private var localCarRepository: CarRepository?
+    
     @State private var isPresentingForm = false
     @State private var isPresentingCarSelection = false
     @State private var refreshID = UUID()
+    
+    /// The active car repository (from environment or local)
+    private var carRepository: CarRepositoryProtocol {
+        if let sd = envCarRepositorySD {
+            return sd
+        }
+        if let env = envCarRepository {
+            return env
+        }
+        // Fallback: create local instance
+        if localCarRepository == nil {
+            localCarRepository = CarRepository()
+        }
+        return localCarRepository!
+    }
     
     private var summary: FuelSummary {
         repository.summary()
@@ -32,10 +52,14 @@ struct HomeView: View {
                     .presentationDetents([.medium, .large])
             }
             .sheet(isPresented: $isPresentingCarSelection, onDismiss: {
-                carRepository = CarRepository()
+                // Reload the local repository if we're using it
+                if localCarRepository != nil {
+                    localCarRepository = CarRepository()
+                }
                 refreshID = UUID()
             }) {
-                CarSelectionView(carRepository: carRepository)
+                // Pass a local CarRepository for the legacy case
+                CarSelectionView(carRepository: localCarRepository ?? CarRepository())
             }
         }
     }

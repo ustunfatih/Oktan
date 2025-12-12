@@ -1,46 +1,108 @@
 import Foundation
 import Combine
+import SwiftData
 
 @MainActor
 final class FuelRepository: ObservableObject {
     @Published private(set) var entries: [FuelEntry] = []
-    private let storageURL: URL
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
-
+    
+    // MARK: - Storage Mode
+    
+    private enum StorageMode {
+        case json(url: URL, encoder: JSONEncoder, decoder: JSONDecoder)
+        case swiftData(context: ModelContext)
+    }
+    
+    private let storageMode: StorageMode
+    
+    // MARK: - Initialization
+    
+    /// Legacy JSON-based initialization
     init(fileManager: FileManager = .default) {
         let directory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: NSTemporaryDirectory())
-        storageURL = directory.appendingPathComponent("fuel_entries.json")
+        let storageURL = directory.appendingPathComponent("fuel_entries.json")
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
         encoder.dateEncodingStrategy = .iso8601
         decoder.dateDecodingStrategy = .iso8601
+        self.storageMode = .json(url: storageURL, encoder: encoder, decoder: decoder)
+    }
+    
+    /// SwiftData-based initialization
+    init(modelContext: ModelContext) {
+        self.storageMode = .swiftData(context: modelContext)
     }
 
     func bootstrapIfNeeded() {
-        if loadFromDisk() == false {
-            entries = SeedData.entries
-            persistToDisk()
+        loadEntries()
+        if entries.isEmpty {
+            for entry in SeedData.entries {
+                _ = add(entry)
+            }
         }
     }
 
     @discardableResult
     func add(_ entry: FuelEntry) -> Bool {
         guard validate(entry) else { return false }
+        
+        switch storageMode {
+        case .swiftData(let context):
+            let sdEntry = FuelEntrySD(from: entry)
+            context.insert(sdEntry)
+            do {
+                try context.save()
+            } catch {
+                print("Failed to save: \(error)")
+                return false
+            }
+        case .json:
+            break
+        }
+        
         entries.append(entry)
         entries.sort { $0.date < $1.date }
-        persistToDisk()
+        persistIfJSON()
         return true
     }
 
     func update(_ entry: FuelEntry) {
         guard let index = entries.firstIndex(where: { $0.id == entry.id }), validate(entry) else { return }
+        
+        switch storageMode {
+        case .swiftData(let context):
+            let descriptor = FetchDescriptor<FuelEntrySD>(
+                predicate: #Predicate { $0.entryId == entry.id }
+            )
+            if let existing = try? context.fetch(descriptor).first {
+                existing.update(from: entry)
+                try? context.save()
+            }
+        case .json:
+            break
+        }
+        
         entries[index] = entry
         entries.sort { $0.date < $1.date }
-        persistToDisk()
+        persistIfJSON()
     }
 
     func delete(_ entry: FuelEntry) {
+        switch storageMode {
+        case .swiftData(let context):
+            let descriptor = FetchDescriptor<FuelEntrySD>(
+                predicate: #Predicate { $0.entryId == entry.id }
+            )
+            if let existing = try? context.fetch(descriptor).first {
+                context.delete(existing)
+                try? context.save()
+            }
+        case .json:
+            break
+        }
+        
         entries.removeAll { $0.id == entry.id }
-        persistToDisk()
+        persistIfJSON()
     }
 
     func summary() -> FuelSummary {
@@ -89,17 +151,34 @@ final class FuelRepository: ObservableObject {
         return true
     }
 
-    @discardableResult
-    private func loadFromDisk() -> Bool {
-        guard let data = try? Data(contentsOf: storageURL) else { return false }
-        guard let decoded = try? decoder.decode([FuelEntry].self, from: data) else { return false }
-        entries = decoded
-        return true
+    /// Loads entries based on storage mode
+    private func loadEntries() {
+        switch storageMode {
+        case .json(let url, _, let decoder):
+            guard let data = try? Data(contentsOf: url),
+                  let decoded = try? decoder.decode([FuelEntry].self, from: data) else {
+                return
+            }
+            entries = decoded
+            
+        case .swiftData(let context):
+            let descriptor = FetchDescriptor<FuelEntrySD>(
+                sortBy: [SortDescriptor(\.date)]
+            )
+            do {
+                let sdEntries = try context.fetch(descriptor)
+                entries = sdEntries.map { $0.toFuelEntry() }
+            } catch {
+                print("Failed to load entries: \(error)")
+            }
+        }
     }
-
-    private func persistToDisk() {
+    
+    /// Persists to disk only if using JSON storage
+    private func persistIfJSON() {
+        guard case .json(let url, let encoder, _) = storageMode else { return }
         guard let data = try? encoder.encode(entries) else { return }
-        try? data.write(to: storageURL, options: .atomic)
+        try? data.write(to: url, options: .atomic)
     }
 
     // MARK: - CSV Export

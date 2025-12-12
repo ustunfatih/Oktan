@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		BCA4F6242EEC9530002504C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BC5E9A8D2EE9D52800489193 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5E9A942EE9D52800489193;
+			remoteInfo = oktan;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		BC5E9A952EE9D52800489193 /* oktan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = oktan.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCA4F6202EEC9530002504C6 /* oktanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = oktanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -29,10 +40,22 @@
 			path = oktan;
 			sourceTree = "<group>";
 		};
+		BCA4F6212EEC9530002504C6 /* oktanTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = oktanTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		BC5E9A922EE9D52800489193 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BCA4F61D2EEC9530002504C6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				BC5E9A972EE9D52800489193 /* oktan */,
+				BCA4F6212EEC9530002504C6 /* oktanTests */,
 				BC5E9A962EE9D52800489193 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				BC5E9A952EE9D52800489193 /* oktan.app */,
+				BCA4F6202EEC9530002504C6 /* oktanTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +108,29 @@
 			productReference = BC5E9A952EE9D52800489193 /* oktan.app */;
 			productType = "com.apple.product-type.application";
 		};
+		BCA4F61F2EEC9530002504C6 /* oktanTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BCA4F6282EEC9530002504C6 /* Build configuration list for PBXNativeTarget "oktanTests" */;
+			buildPhases = (
+				BCA4F61C2EEC9530002504C6 /* Sources */,
+				BCA4F61D2EEC9530002504C6 /* Frameworks */,
+				BCA4F61E2EEC9530002504C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BCA4F6252EEC9530002504C6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				BCA4F6212EEC9530002504C6 /* oktanTests */,
+			);
+			name = oktanTests;
+			packageProductDependencies = (
+			);
+			productName = oktanTests;
+			productReference = BCA4F6202EEC9530002504C6 /* oktanTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -96,13 +144,17 @@
 					BC5E9A942EE9D52800489193 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
+					BCA4F61F2EEC9530002504C6 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = BC5E9A942EE9D52800489193;
+					};
 				};
 			};
 			buildConfigurationList = BC5E9A902EE9D52800489193 /* Build configuration list for PBXProject "oktan" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-						tr,
+				tr,
 				en,
 				Base,
 			);
@@ -114,12 +166,20 @@
 			projectRoot = "";
 			targets = (
 				BC5E9A942EE9D52800489193 /* oktan */,
+				BCA4F61F2EEC9530002504C6 /* oktanTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		BC5E9A932EE9D52800489193 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BCA4F61E2EEC9530002504C6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -136,7 +196,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BCA4F61C2EEC9530002504C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BCA4F6252EEC9530002504C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5E9A942EE9D52800489193 /* oktan */;
+			targetProxy = BCA4F6242EEC9530002504C6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		BC5E9A9E2EE9D52900489193 /* Debug */ = {
@@ -265,6 +340,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = oktan/oktan.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 23BJ9QDJAH;
@@ -281,7 +357,6 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = FU.oktan;
-								CODE_SIGN_ENTITLEMENTS = oktan/oktan.entitlements;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -298,6 +373,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = oktan/oktan.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 23BJ9QDJAH;
@@ -314,7 +390,6 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = FU.oktan;
-								CODE_SIGN_ENTITLEMENTS = oktan/oktan.entitlements;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -323,6 +398,48 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BCA4F6262EEC9530002504C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 23BJ9QDJAH;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FU.oktanTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/oktan.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/oktan";
+			};
+			name = Debug;
+		};
+		BCA4F6272EEC9530002504C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 23BJ9QDJAH;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FU.oktanTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/oktan.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/oktan";
 			};
 			name = Release;
 		};
@@ -343,6 +460,15 @@
 			buildConfigurations = (
 				BC5E9AA12EE9D52900489193 /* Debug */,
 				BC5E9AA22EE9D52900489193 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BCA4F6282EEC9530002504C6 /* Build configuration list for PBXNativeTarget "oktanTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BCA4F6262EEC9530002504C6 /* Debug */,
+				BCA4F6272EEC9530002504C6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

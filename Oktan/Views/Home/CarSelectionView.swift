@@ -2,7 +2,19 @@ import SwiftUI
 
 struct CarSelectionView: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var carRepository: CarRepository
+    
+    // Support both legacy binding and environment injection
+    @Bindable var legacyCarRepository: CarRepository
+    @Environment(CarRepositorySD.self) private var envCarRepositorySD: CarRepositorySD?
+    
+    /// The active car repository
+    private var carRepository: CarRepositoryProtocol {
+        envCarRepositorySD ?? legacyCarRepository
+    }
+    
+    init(carRepository: CarRepository) {
+        self.legacyCarRepository = carRepository
+    }
     
     @State private var selectedMake: CarDatabase.CarMake?
     @State private var selectedModel: CarDatabase.CarModel?

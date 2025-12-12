@@ -1,36 +1,86 @@
 import SwiftUI
+import SwiftData
+
+// MARK: - Feature Flags
+
+/// Controls whether to use SwiftData or legacy JSON storage
+/// Set to true to enable SwiftData globally
+private let useSwiftData = true
 
 @main
 struct OktanApp: App {
-    @StateObject private var repository = FuelRepository()
+    // MARK: - SwiftData Container
+    
+    /// SwiftData model container (always created for migration support)
+    private let modelContainer: ModelContainer
+    
+    // MARK: - Repositories
+    
+    /// The main fuel repository - uses SwiftData or JSON based on feature flag
+    @StateObject private var repository: FuelRepository
+    
+    /// Car repository with SwiftData support
+    @State private var carRepository: CarRepositorySD?
+    
+    /// Legacy car repository for fallback
+    @State private var legacyCarRepository = CarRepository()
+    
+    // MARK: - Other State
+    
     @State private var appSettings = AppSettings()
     @State private var authManager = AuthenticationManager()
     @State private var showSplash = true
+    @State private var isInitialized = false
+
+    // MARK: - Initialization
+    
+    init() {
+        // Initialize SwiftData container
+        do {
+            let container = try DataContainer.create()
+            self.modelContainer = container
+            
+            if useSwiftData {
+                // Create FuelRepository with SwiftData backend
+                let context = container.mainContext
+                _repository = StateObject(wrappedValue: FuelRepository(modelContext: context))
+            } else {
+                // Create FuelRepository with JSON backend
+                _repository = StateObject(wrappedValue: FuelRepository())
+            }
+        } catch {
+            fatalError("Failed to create SwiftData container: \(error)")
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
             ZStack {
                 MainTabView(appSettings: appSettings)
                     .environmentObject(repository)
+                    .environment(carRepository ?? legacyCarRepository)
                     .environment(appSettings)
                     .environment(authManager)
                     .opacity(showSplash ? 0 : 1)
+                    .modelContainer(modelContainer)
                 
                 if showSplash && appSettings.showSplashAnimation {
                     SplashView()
                         .transition(.opacity)
                 }
             }
-            .onAppear {
+            .task {
+                // Initialize
+                await initialize()
+                
                 // Check credential state on app launch
                 authManager.checkCredentialState()
                 
                 // Dismiss splash after animation completes
                 if appSettings.showSplashAnimation {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            showSplash = false
-                        }
+                    try? await Task.sleep(for: .seconds(2.0))
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        showSplash = false
                     }
                 } else {
                     showSplash = false
@@ -38,7 +88,34 @@ struct OktanApp: App {
             }
         }
     }
+    
+    // MARK: - Initialization
+    
+    @MainActor
+    private func initialize() async {
+        guard !isInitialized else { return }
+        
+        let context = modelContainer.mainContext
+        
+        // Perform migration from JSON if needed
+        if useSwiftData {
+            let migrationResult = await DataMigrationService.migrateIfNeeded(context: context)
+            if !migrationResult.alreadyCompleted {
+                print("Migration: \(migrationResult.description)")
+            }
+            
+            // Initialize SwiftData car repository
+            carRepository = CarRepositorySD(modelContext: context)
+        }
+        
+        // Bootstrap with seed data if empty
+        repository.bootstrapIfNeeded()
+        
+        isInitialized = true
+    }
 }
+
+// MARK: - Main Tab View
 
 struct MainTabView: View {
     @EnvironmentObject private var repository: FuelRepository
@@ -72,6 +149,5 @@ struct MainTabView: View {
                 }
         }
         .tint(DesignSystem.ColorPalette.primaryBlue)
-        .onAppear { repository.bootstrapIfNeeded() }
     }
 }
