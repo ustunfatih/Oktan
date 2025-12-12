@@ -31,8 +31,9 @@ struct SplashView: View {
                 let centerX = geometry.size.width / 2
                 let centerY = geometry.size.height / 2
                 
-                // Assuming Dynamic Island bottom is around y=65 roughly.
-                let startY: CGFloat = 65
+                // Dynamic Island is roughly Y=11 to Y=48.
+                // Start Y=25 ensures the drop sources from INSIDE the black area.
+                let startY: CGFloat = 25
                 
                 ForEach(drops.indices, id: \.self) { index in
                     let config = drops[index]
