@@ -33,11 +33,25 @@ enum QuickStatsWidgetModule {
                 let entries = try context.fetch(descriptor)
                 
                 if let last = entries.first {
-                    let effValue = last.litersPer100KM ?? 0
-                    let eff = effValue > 0 ? String(format: "%.1f L/100km", effValue) : "—"
+                    // Try to get latest efficiency
+                    var effDisplay = "—"
+                    if let effValue = last.litersPer100KM, effValue > 0 {
+                         effDisplay = String(format: "%.1f L/100km", effValue)
+                    } else {
+                        // Fallback: Try global average
+                        let validEntries = entries.compactMap { $0.litersPer100KM }
+                        if !validEntries.isEmpty {
+                            let sum = validEntries.reduce(0, +)
+                            let avg = sum / Double(validEntries.count)
+                            effDisplay = String(format: "Avg: %.1f", avg)
+                        } else if entries.count == 1 {
+                             effDisplay = "First Log"
+                        }
+                    }
+                    
                     let date = last.date.formatted(date: .abbreviated, time: .omitted)
                     let cost = String(format: "%.2f", last.totalCost)
-                    return QuickStatsEntry(date: Date(), efficiency: eff, lastFillup: date, cost: cost)
+                    return QuickStatsEntry(date: Date(), efficiency: effDisplay, lastFillup: date, cost: cost)
                 }
             } catch {
                 print("Widget fetch error: \(error)")

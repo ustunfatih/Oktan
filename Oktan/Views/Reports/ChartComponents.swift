@@ -417,7 +417,8 @@ struct PeriodComparisonCard: View {
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(DesignSystem.ColorPalette.label)
             
-            if let current = comparison.currentPeriod {
+            if let current = comparison.currentPeriod,
+               (current.averageEfficiency != nil || current.averageCostPerKM != nil) {
                 HStack(spacing: DesignSystem.Spacing.medium) {
                     // Efficiency change
                     ComparisonMetric(
@@ -436,9 +437,15 @@ struct PeriodComparisonCard: View {
                     )
                 }
             } else {
-                Text("Need at least one month of data")
-                    .font(.subheadline)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                HStack {
+                    Image(systemName: "gauge.badge.plus")
+                        .font(.title2)
+                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                    Text("Add odometer readings to see efficiency trends")
+                        .font(.subheadline)
+                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                }
+                .padding(.vertical, 8)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
