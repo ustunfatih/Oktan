@@ -350,12 +350,17 @@ struct CarSelectionView: View {
     }
     
     private func generateCarImage() {
-        guard let make = selectedMake, let model = selectedModel else { return }
+        guard let make = selectedMake, let model = selectedModel else { 
+            print("⛔️ generateCarImage: No make or model selected")
+            return 
+        }
         
+        print("🎯 generateCarImage starting for: \(selectedYear) \(make.name) \(model.name)")
         isGeneratingImage = true
         carImage = nil
         
         Task {
+            print("🔄 Calling CarImageService.generateImage...")
             let imageData = await CarImageService.generateImage(
                 make: make.name,
                 model: model.name,
@@ -363,8 +368,12 @@ struct CarSelectionView: View {
             )
             
             await MainActor.run {
+                print("📦 Received image data: \(imageData?.count ?? 0) bytes")
                 if let data = imageData, let image = UIImage(data: data) {
                     self.carImage = image
+                    print("✅ Image set successfully!")
+                } else {
+                    print("❌ Failed to create UIImage from data")
                 }
                 self.isGeneratingImage = false
             }

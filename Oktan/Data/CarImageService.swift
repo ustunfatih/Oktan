@@ -20,116 +20,75 @@ enum CarImageService {
         loadBundledImage(make: make, model: model) != nil
     }
     
-    /// Fetches car image using Gemini AI first, then fallbacks
+    /// Fetches car image using Pollinations.ai (free, no API key needed)
     static func generateImage(make: String, model: String, year: Int) async -> Data? {
-        // 1. Try Gemini 2.0 Flash Image Generation
-        if let data = await generateWithGemini(make: make, model: model, year: year) {
+        print("🚗 CarImageService.generateImage called for: \(year) \(make) \(model)")
+        
+        // 1. Try Pollinations.ai - FREE AI image generation, no API key needed!
+        print("🔄 Attempting Pollinations.ai image generation...")
+        if let data = await generateWithPollinations(make: make, model: model, year: year) {
+            print("✅ Pollinations.ai image generation succeeded!")
             return data
         }
+        print("❌ Pollinations.ai failed, trying Imagin.studio fallback...")
         
         // 2. Fallback: Imagin.studio
         if let data = await fetchFromImaginStudio(make: make, model: model, year: year) {
+            print("✅ Imagin.studio fallback succeeded!")
             return data
         }
+        print("❌ Imagin.studio failed, using generic placeholder...")
         
         // 3. Fallback: Generic placeholder
         return await fetchGenericCarImage(make: make, model: model, year: year)
     }
     
-    // MARK: - Gemini 2.0 Flash Image Generation
+    // MARK: - Pollinations.ai Image Generation (FREE, No API Key)
     
-    /// Loads API key from Secrets.plist (not tracked in git)
-    private static var geminiAPIKey: String? {
-        guard let path = Bundle.main.path(forResource: "Secrets", ofType: "plist"),
-              let dict = NSDictionary(contentsOfFile: path),
-              let key = dict["GEMINI_API_KEY"] as? String else {
-            print("⚠️ Secrets.plist not found or GEMINI_API_KEY missing")
+    private static func generateWithPollinations(make: String, model: String, year: Int) async -> Data? {
+        // Pollinations.ai is free and requires no API key!
+        // Just encode the prompt in the URL
+        let prompt = "\(year) \(make) \(model) car, side profile view, isolated on white background, professional automotive photography, high quality, no watermarks, no text"
+        
+        guard let encodedPrompt = prompt.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            print("Failed to encode prompt")
             return nil
         }
-        return key
-    }
-    
-    private static func generateWithGemini(make: String, model: String, year: Int) async -> Data? {
-        guard let apiKey = geminiAPIKey else { return nil }
         
-        // Use the image generation specific model
-        let endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=\(apiKey)"
+        // Pollinations.ai endpoint - simple GET request with prompt in URL
+        let urlString = "https://image.pollinations.ai/prompt/\(encodedPrompt)?width=800&height=500&nologo=true"
         
-        guard let url = URL(string: endpoint) else { return nil }
+        print("📡 Pollinations URL: \(urlString)")
         
-        let prompt = "Create a photorealistic image of a \(year) \(make) \(model) car. Side profile view, isolated on pure white background, professional automotive studio photography, no watermarks, no text overlays, high resolution."
-        
-        // Correct format for Gemini image generation - modalities are case-sensitive
-        let jsonBody: [String: Any] = [
-            "contents": [
-                [
-                    "parts": [
-                        ["text": prompt]
-                    ]
-                ]
-            ],
-            "generationConfig": [
-                "responseModalities": ["Text", "Image"]
-            ]
-        ]
-        
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: jsonBody) else { return nil }
+        guard let url = URL(string: urlString) else { 
+            print("Invalid URL")
+            return nil 
+        }
         
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = httpBody
-        request.timeoutInterval = 60 // Image generation can take up to 30-60 seconds
+        request.timeoutInterval = 60 // AI generation can take time
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpResponse = response as? HTTPURLResponse {
+                print("📥 Pollinations response status: \(httpResponse.statusCode)")
                 if !(200...299).contains(httpResponse.statusCode) {
-                    if let errorString = String(data: data, encoding: .utf8) {
-                        print("Gemini Image API Error: \(httpResponse.statusCode) - \(errorString)")
-                    }
                     return nil
                 }
             }
             
-            // Parse the response to extract inlineData
-            return extractImageFromGeminiResponse(data)
-            
-        } catch {
-            print("Gemini Network Error: \(error)")
-            return nil
-        }
-    }
-    
-    private static func extractImageFromGeminiResponse(_ data: Data) -> Data? {
-        do {
-            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let candidates = json["candidates"] as? [[String: Any]],
-                  let firstCandidate = candidates.first,
-                  let content = firstCandidate["content"] as? [String: Any],
-                  let parts = content["parts"] as? [[String: Any]] else {
-                print("Failed to parse Gemini response structure")
+            // Verify we got valid image data
+            if data.count > 1000, UIImage(data: data) != nil {
+                print("✅ Got valid image from Pollinations: \(data.count) bytes")
+                return data
+            } else {
+                print("❌ Invalid image data from Pollinations")
                 return nil
             }
             
-            // Look for inlineData in any part
-            for part in parts {
-                if let inlineData = part["inlineData"] as? [String: Any],
-                   let base64String = inlineData["data"] as? String {
-                    print("Found image data in Gemini response!")
-                    return Data(base64Encoded: base64String)
-                }
-            }
-            
-            // Debug: print what we got
-            if let responseString = String(data: data, encoding: .utf8) {
-                print("Gemini response (no image found): \(responseString.prefix(500))")
-            }
-            
-            return nil
         } catch {
-            print("JSON parsing error: \(error)")
+            print("❌ Pollinations error: \(error)")
             return nil
         }
     }
