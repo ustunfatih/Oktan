@@ -38,9 +38,11 @@ struct SplashView: View {
             GeometryReader { geometry in
                 let centerX = geometry.size.width / 2
                 let centerY = geometry.size.height / 2
-                // Dynamic Island covers approx 0-54pt.
-                // Start Y at 20 ensures drops emerge from "behind/inside" the island.
-                let startY: CGFloat = 20
+                
+                // Dynamic Island bottom edge is approx ~54pt on Pro max, ~48-50 on Pro.
+                // We utilize .ignoresSafeArea() so (0,0) is true top-left.
+                // Setting to 46 ensures the drop's neck is at the edge while the body grows out.
+                let startY: CGFloat = 46
                 
                 ForEach(drops.indices, id: \.self) { index in
                     let config = drops[index]
@@ -53,6 +55,9 @@ struct SplashView: View {
                     )
                 }
             }
+            }
+        }
+        .ignoresSafeArea() // Ensure GeometryReader covers full screen including Island area
         }
         .task {
             // Wait for all drops to splash and settle
