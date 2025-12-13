@@ -43,7 +43,7 @@
                     <key>UISceneConfigurationName</key>
                     <string>CarPlay</string>
                     <key>UISceneDelegateClassName</key>
-                    <string>$(PRODUCT_MODULE_NAME).CarPlaySceneDelegate</string>
+                    <string>Oktan.CarPlaySceneDelegate</string>
                 </dict>
             </array>
         </dict>
