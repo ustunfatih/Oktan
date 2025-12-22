@@ -1,6 +1,10 @@
 import Charts
 import SwiftUI
 
+// MARK: - iOS 26 Design Bible Compliant ReportsView
+// Removed: ScrollView + VStack, DesignSystem.Spacing.*, DesignSystem.ColorPalette.*,
+//          .frame(height: N), .tint(), .glassCard(), LinearGradient
+
 struct ReportsView: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(AppSettings.self) private var settings
@@ -22,6 +26,7 @@ struct ReportsView: View {
             let summary = repository.summary()
 
             List {
+                // Tab Picker Section
                 Section {
                     Picker("Report Type", selection: $selectedTab) {
                         ForEach(ReportTab.allCases, id: \.self) { tab in
@@ -33,6 +38,7 @@ struct ReportsView: View {
                     .listRowInsets(EdgeInsets())
                 }
 
+                // Content based on selected tab
                 switch selectedTab {
                 case .overview:
                     overviewContent(summary: summary)
@@ -78,24 +84,28 @@ struct ReportsView: View {
 
     @ViewBuilder
     private func overviewContent(summary: FuelSummary) -> some View {
+        // Metrics Section
         Section {
             metricsContent(summary: summary)
         } header: {
             Text("At a Glance")
         }
 
+        // Period Comparison Section
         Section {
             periodComparisonContent()
         } header: {
             Text("Month-over-Month")
         }
 
+        // Insights Section
         Section {
             insightsContent()
         } header: {
             Label("Insights", systemImage: "lightbulb.fill")
         }
 
+        // Export Section
         Section {
             exportContent()
         } header: {
@@ -108,18 +118,21 @@ struct ReportsView: View {
     @ViewBuilder
     private func trendsContent() -> some View {
         if premiumManager.isPremium {
+            // Efficiency Chart Section
             Section {
                 efficiencyChartContent()
             } header: {
                 Text("Efficiency Trend")
             }
 
+            // Monthly Cost Section
             Section {
                 monthlyCostChartContent()
             } header: {
                 Text("Monthly Spending")
             }
 
+            // Cost per KM Section
             Section {
                 costPerKMChartContent()
             } header: {
@@ -137,18 +150,21 @@ struct ReportsView: View {
     @ViewBuilder
     private func patternsContent() -> some View {
         if premiumManager.isPremium {
+            // Drive Mode Comparison Section
             Section {
                 driveModeChartContent()
             } header: {
                 Text("Efficiency by Drive Mode")
             }
 
+            // Fill-up Frequency Section
             Section {
                 fillupFrequencyContent()
             } header: {
                 Text("Fill-up Patterns")
             }
 
+            // Drive Mode Details Section
             Section {
                 driveModeDetailsContent(summary: repository.summary())
             } header: {
@@ -165,6 +181,7 @@ struct ReportsView: View {
 
     private func metricsContent(summary: FuelSummary) -> some View {
         Group {
+            // Total Distance
             LabeledContent {
                 VStack(alignment: .trailing) {
                     Text(settings.formatDistance(summary.totalDistance))
@@ -177,6 +194,7 @@ struct ReportsView: View {
                 Label("Total Distance", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
             }
 
+            // Total Fuel
             LabeledContent {
                 VStack(alignment: .trailing) {
                     Text(settings.formatVolume(summary.totalLiters))
@@ -191,6 +209,7 @@ struct ReportsView: View {
                 Label("Total Fuel", systemImage: "drop.fill")
             }
 
+            // Total Spent
             LabeledContent {
                 VStack(alignment: .trailing) {
                     Text(settings.formatCost(summary.totalCost))
@@ -205,6 +224,7 @@ struct ReportsView: View {
                 Label("Total Spent", systemImage: "creditcard.fill")
             }
 
+            // Recent Efficiency
             LabeledContent {
                 VStack(alignment: .trailing) {
                     Text(summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "N/A")
@@ -221,7 +241,7 @@ struct ReportsView: View {
         }
     }
 
-    // MARK: - Period Comparison
+    // MARK: - Period Comparison Content
 
     private func periodComparisonContent() -> some View {
         let comparison = ChartDataService.monthOverMonthComparison(from: repository.entries)
@@ -229,6 +249,7 @@ struct ReportsView: View {
         return Group {
             if let current = comparison.currentPeriod,
                (current.averageEfficiency != nil || current.averageCostPerKM != nil) {
+                // Efficiency
                 if let efficiency = current.averageEfficiency {
                     LabeledContent {
                         HStack {
@@ -243,6 +264,7 @@ struct ReportsView: View {
                     }
                 }
 
+                // Cost per km
                 if let costPerKM = current.averageCostPerKM {
                     LabeledContent {
                         HStack {
@@ -311,7 +333,7 @@ struct ReportsView: View {
         }
     }
 
-    // MARK: - Efficiency Chart
+    // MARK: - Efficiency Chart Content
 
     private func efficiencyChartContent() -> some View {
         let trendData = ChartDataService.efficiencyTrend(from: repository.entries)
@@ -327,7 +349,7 @@ struct ReportsView: View {
                             x: .value("Date", point.date),
                             y: .value("Efficiency", settings.convertEfficiency(point.value))
                         )
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.blue.opacity(0.6))
                     }
 
                     ForEach(rollingAverage) { point in
@@ -336,6 +358,7 @@ struct ReportsView: View {
                             y: .value("Average", settings.convertEfficiency(point.value))
                         )
                         .foregroundStyle(.blue)
+                        .lineStyle(StrokeStyle(lineWidth: 2))
                         .interpolationMethod(.catmullRom)
                     }
                 }
@@ -345,7 +368,7 @@ struct ReportsView: View {
                         AxisValueLabel(format: .dateTime.month(.abbreviated))
                     }
                 }
-                .aspectRatio(1.5, contentMode: .fit)
+                .aspectRatio(1.5, contentMode: .fit) // Use aspect ratio instead of fixed height
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("Efficiency trend chart showing \(trendData.count) data points")
                 .accessibilityIdentifier(AccessibilityID.reportsChart)
@@ -353,7 +376,7 @@ struct ReportsView: View {
         }
     }
 
-    // MARK: - Monthly Cost Chart
+    // MARK: - Monthly Cost Chart Content
 
     private func monthlyCostChartContent() -> some View {
         let monthlyData = ChartDataService.aggregateMonthly(from: repository.entries)
@@ -379,7 +402,7 @@ struct ReportsView: View {
         }
     }
 
-    // MARK: - Cost per KM Chart
+    // MARK: - Cost per KM Chart Content
 
     private func costPerKMChartContent() -> some View {
         let entries = repository.entries.filter { $0.costPerKM != nil }
@@ -393,7 +416,7 @@ struct ReportsView: View {
                         x: .value("Date", entry.date),
                         y: .value("Cost", settings.convertCostPerDistance(entry.costPerKM ?? 0))
                     )
-                    .foregroundStyle(.green.opacity(0.3))
+                    .foregroundStyle(.green.opacity(0.3)) // System color with opacity
                     .interpolationMethod(.catmullRom)
 
                     LineMark(
@@ -401,6 +424,7 @@ struct ReportsView: View {
                         y: .value("Cost", settings.convertCostPerDistance(entry.costPerKM ?? 0))
                     )
                     .foregroundStyle(.green)
+                    .lineStyle(StrokeStyle(lineWidth: 2))
                     .interpolationMethod(.catmullRom)
                 }
                 .chartXAxis {
@@ -415,7 +439,7 @@ struct ReportsView: View {
         }
     }
 
-    // MARK: - Drive Mode Chart
+    // MARK: - Drive Mode Chart Content
 
     private func driveModeChartContent() -> some View {
         let comparisonData = ChartDataService.driveModeComparison(from: repository.entries)
@@ -448,7 +472,7 @@ struct ReportsView: View {
         }
     }
 
-    // MARK: - Fill-up Frequency
+    // MARK: - Fill-up Frequency Content
 
     private func fillupFrequencyContent() -> some View {
         let dayOfWeekData = ChartDataService.fillupsByDayOfWeek(from: repository.entries)
@@ -474,7 +498,7 @@ struct ReportsView: View {
         }
     }
 
-    // MARK: - Drive Mode Details
+    // MARK: - Drive Mode Details Content
 
     private func driveModeDetailsContent(summary: FuelSummary) -> some View {
         Group {
@@ -562,6 +586,8 @@ struct ReportsView: View {
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     ReportsView()

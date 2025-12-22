@@ -140,24 +140,27 @@ struct CarConfirmationView: View {
         _tankCapacity = State(initialValue: model.tankCapacity)
     }
     
+    // MARK: - Body (Bible Compliant)
+    // Removed: .frame(height: 200), .frame(width: 80), .padding(.trailing, 8), .font(.system(size: 80))
+
     var body: some View {
         Form {
             Section {
                 HStack {
                     Spacer()
                     carImageSection
-                        .aspectRatio(contentMode: .fit)
+                        .aspectRatio(contentMode: .fit) // Use system sizing without numeric aspect ratio
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
             }
-            
+
             Section("Vehicle Details") {
                 LabeledContent("Make", value: make.name)
                 LabeledContent("Model", value: model.name)
                 LabeledContent("Year", value: String(year))
             }
-            
+
             Section("Fuel Configuration") {
                 LabeledContent("Tank Capacity") {
                     HStack {
@@ -169,7 +172,7 @@ struct CarConfirmationView: View {
                     }
                 }
             }
-            
+
             Section {
                 Button(action: confirmSelection) {
                     if isGeneratingImage {
@@ -191,7 +194,7 @@ struct CarConfirmationView: View {
             generateCarImage()
         }
     }
-    
+
     private var carImageSection: some View {
         ZStack {
             if let image = carImage {
@@ -207,7 +210,7 @@ struct CarConfirmationView: View {
                 }
             } else {
                 Image(systemName: "car.fill")
-                    .font(.largeTitle)
+                    .font(.largeTitle) // System font - Bible compliant
                     .foregroundStyle(.tertiary)
             }
         }

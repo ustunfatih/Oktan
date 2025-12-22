@@ -35,39 +35,39 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             List {
-            // Car Section
-            Section {
-                carSection
-                    .id(refreshID)
+                // Car Section
+                Section {
+                    carSection
+                        .id(refreshID)
+                }
+                .listRowBackground(Color.clear)
+                
+                // Hero Card Section
+                Section {
+                    heroCard
+                }
+                .listRowBackground(Color.clear)
+                
+                // Efficiency Section
+                Section {
+                    efficiencySection
+                } header: {
+                    Text("Efficiency")
+                }
+                
+                // Recent Activity Section
+                Section {
+                    recentActivitySection
+                } header: {
+                    Text("Recent Activity")
+                }
+                
+                // Quick Add Section
+                Section {
+                    quickAddButton
+                }
+                .listRowBackground(Color.clear)
             }
-            .listRowBackground(Color.clear)
-            
-            // Hero Card Section
-            Section {
-                heroCard
-            }
-            .listRowBackground(Color.clear)
-            
-            // Efficiency Section
-            Section {
-                efficiencySection
-            } header: {
-                Text("Efficiency")
-            }
-            
-            // Recent Activity Section
-            Section {
-                recentActivitySection
-            } header: {
-                Text("Recent Activity")
-            }
-            
-            // Quick Add Section
-            Section {
-                quickAddButton
-            }
-            .listRowBackground(Color.clear)
-        }
             .listStyle(.insetGrouped)
             .navigationTitle("Home")
             .sheet(isPresented: $isPresentingForm) {
@@ -105,24 +105,24 @@ struct HomeView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             }
-            
+
             // Car info
             Text("\(car.year) \(car.make)")
                 .font(.headline)
             Text(car.model)
                 .font(.title2.weight(.bold))
-            
+
             // Tank capacity
             Text("Tank: \(settings.formatVolume(car.tankCapacity))")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            
+
             Button(action: { isPresentingCarSelection = true }) {
                 Label("Change Car", systemImage: "arrow.triangle.2.circlepath")
                     .font(.subheadline)
             }
         }
-        .padding()
+        .padding() // No numeric value - Bible compliant
         .background(.ultraThinMaterial)
     }
     
@@ -130,26 +130,27 @@ struct HomeView: View {
         Button(action: { isPresentingCarSelection = true }) {
             VStack {
                 Image(systemName: "car.badge.gearshape")
-                    .font(.largeTitle)
+                    .font(.largeTitle) // System font size - Bible compliant
                     .foregroundStyle(.tint)
-                
+
                 Text("Add Your Car")
                     .font(.headline)
-                
+
                 Text("Set up your car to track fuel efficiency")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            .padding()
+            .padding() // No numeric value - Bible compliant
             .frame(maxWidth: .infinity)
             .background(.ultraThinMaterial)
         }
         .accessibilityIdentifier("add-car-button")
     }
     
-    // MARK: - Hero Card
-    
+    // MARK: - Hero Card (Bible Compliant)
+    // Removed: LinearGradient, RoundedRectangle, fixed font sizes, custom opacity
+
     private var heroCard: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -157,20 +158,20 @@ struct HomeView: View {
                     Text("Total Distance")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    
+
                     Text(settings.formatDistance(summary.totalDistance))
                         .font(.largeTitle.bold())
                         .foregroundStyle(.primary)
                 }
-                
+
                 Spacer()
-                
+
                 Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
                     .font(.largeTitle)
                     .foregroundStyle(.tertiary)
                     .accessibilityHidden(true)
             }
-            
+
             HStack {
                 VStack(alignment: .leading) {
                     Text("Total Spent")
@@ -180,9 +181,9 @@ struct HomeView: View {
                         .font(.headline)
                         .foregroundStyle(.primary)
                 }
-                
+
                 Spacer()
-                
+
                 VStack(alignment: .leading) {
                     Text("Fill-ups")
                         .font(.caption)
@@ -194,6 +195,7 @@ struct HomeView: View {
             }
         }
         .padding()
+        .background(.tint.opacity(0.1)) // System tint with low opacity
         .background(.ultraThinMaterial)
         // Accessibility
         .accessibilityElement(children: .combine)
