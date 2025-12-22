@@ -8,7 +8,7 @@ struct MetricCard: View {
     let tint: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading) {
             Label(title, systemImage: icon)
                 .font(.headline)
                 .foregroundStyle(tint)
@@ -25,7 +25,6 @@ struct MetricCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(Color(uiColor: .secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title). \(value). \(trend ?? "")")
     }

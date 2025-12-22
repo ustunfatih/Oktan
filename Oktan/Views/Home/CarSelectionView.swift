@@ -146,7 +146,7 @@ struct CarConfirmationView: View {
                 HStack {
                     Spacer()
                     carImageSection
-                        .frame(height: 200)
+                        .aspectRatio(contentMode: .fit)
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
@@ -159,15 +159,14 @@ struct CarConfirmationView: View {
             }
             
             Section("Fuel Configuration") {
-                HStack {
-                    Text("Tank Capacity")
-                    Spacer()
-                    TextField("Liters", value: $tankCapacity, format: .number)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 80)
-                    Text("L")
-                        .foregroundStyle(.secondary)
+                LabeledContent("Tank Capacity") {
+                    HStack {
+                        TextField("Liters", value: $tankCapacity, format: .number)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                        Text("L")
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             
@@ -176,7 +175,6 @@ struct CarConfirmationView: View {
                     if isGeneratingImage {
                         HStack {
                             ProgressView()
-                                .padding(.trailing, 8)
                             Text("Generating Image...")
                         }
                     } else {
@@ -209,8 +207,8 @@ struct CarConfirmationView: View {
                 }
             } else {
                 Image(systemName: "car.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(.blue.opacity(0.3))
+                    .font(.largeTitle)
+                    .foregroundStyle(.tertiary)
             }
         }
     }

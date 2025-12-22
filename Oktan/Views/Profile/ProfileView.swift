@@ -26,22 +26,11 @@ struct ProfileView: View {
         // Profile Header Section
         Section {
             HStack {
-                // Avatar
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.blue, .indigo],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 60, height: 60)
-                    
-                    Text(user.initials)
-                        .font(.title2.bold())
-                        .foregroundStyle(.white)
-                }
+                Text(user.initials)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .padding()
+                    .background(Circle().fill(.tint))
                 
                 VStack(alignment: .leading) {
                     Text(user.displayName)
@@ -93,8 +82,8 @@ struct ProfileView: View {
         Section {
             VStack {
                 Image(systemName: "person.circle.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(.blue)
+                    .font(.largeTitle)
+                    .foregroundStyle(.tint)
                 
                 Text("Sign in to Oktan")
                     .font(.title2.bold())
@@ -168,7 +157,7 @@ struct ProfileView: View {
             }
         } icon: {
             Image(systemName: icon)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.tint)
         }
     }
 }

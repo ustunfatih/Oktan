@@ -213,14 +213,8 @@ struct AboutView: View {
                 Section {
                     VStack {
                         Image(systemName: "fuelpump.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.blue, .indigo],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                            .font(.largeTitle)
+                            .foregroundStyle(.tint)
                         
                         Text("Oktan")
                             .font(.largeTitle.bold())
@@ -246,7 +240,7 @@ struct AboutView: View {
                 
                 // Footer
                 Section {
-                    Text("Made with ❤️ for drivers")
+                    Text("Made with love for drivers")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
@@ -275,7 +269,7 @@ struct AboutView: View {
             }
         } icon: {
             Image(systemName: icon)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.tint)
         }
     }
 }

@@ -35,39 +35,39 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Car Section
-                Section {
-                    carSection
-                        .id(refreshID)
-                }
-                .listRowBackground(Color.clear)
-                
-                // Hero Card Section
-                Section {
-                    heroCard
-                }
-                .listRowBackground(Color.clear)
-                
-                // Efficiency Section
-                Section {
-                    efficiencySection
-                } header: {
-                    Text("Efficiency")
-                }
-                
-                // Recent Activity Section
-                Section {
-                    recentActivitySection
-                } header: {
-                    Text("Recent Activity")
-                }
-                
-                // Quick Add Section
-                Section {
-                    quickAddButton
-                }
-                .listRowBackground(Color.clear)
+            // Car Section
+            Section {
+                carSection
+                    .id(refreshID)
             }
+            .listRowBackground(Color.clear)
+            
+            // Hero Card Section
+            Section {
+                heroCard
+            }
+            .listRowBackground(Color.clear)
+            
+            // Efficiency Section
+            Section {
+                efficiencySection
+            } header: {
+                Text("Efficiency")
+            }
+            
+            // Recent Activity Section
+            Section {
+                recentActivitySection
+            } header: {
+                Text("Recent Activity")
+            }
+            
+            // Quick Add Section
+            Section {
+                quickAddButton
+            }
+            .listRowBackground(Color.clear)
+        }
             .listStyle(.insetGrouped)
             .navigationTitle("Home")
             .sheet(isPresented: $isPresentingForm) {
@@ -130,8 +130,8 @@ struct HomeView: View {
         Button(action: { isPresentingCarSelection = true }) {
             VStack {
                 Image(systemName: "car.badge.gearshape")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.blue)
+                    .font(.largeTitle)
+                    .foregroundStyle(.tint)
                 
                 Text("Add Your Car")
                     .font(.headline)
@@ -156,33 +156,29 @@ struct HomeView: View {
                 VStack(alignment: .leading) {
                     Text("Total Distance")
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.8))
+                        .foregroundStyle(.secondary)
                     
                     Text(settings.formatDistance(summary.totalDistance))
-                        .font(.system(size: 36, weight: .bold))
-                        .foregroundStyle(.white)
+                        .font(.largeTitle.bold())
+                        .foregroundStyle(.primary)
                 }
                 
                 Spacer()
                 
                 Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.white.opacity(0.3))
+                    .font(.largeTitle)
+                    .foregroundStyle(.tertiary)
                     .accessibilityHidden(true)
             }
-            
-            Divider()
-                .background(.white.opacity(0.3))
-                .accessibilityHidden(true)
             
             HStack {
                 VStack(alignment: .leading) {
                     Text("Total Spent")
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.secondary)
                     Text(settings.formatCost(summary.totalCost))
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                 }
                 
                 Spacer()
@@ -190,22 +186,15 @@ struct HomeView: View {
                 VStack(alignment: .leading) {
                     Text("Fill-ups")
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.secondary)
                     Text("\(repository.entries.count)")
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                 }
             }
         }
         .padding()
-        .background(
-            LinearGradient(
-                colors: [.blue, .indigo],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .background(.ultraThinMaterial)
         // Accessibility
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Fuel summary")
