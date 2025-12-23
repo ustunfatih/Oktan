@@ -35,6 +35,9 @@ struct OktanApp: App {
     /// Notification service
     @State private var notificationService = NotificationService()
     
+    /// Milestone service
+    @State private var milestoneService = MilestoneService()
+    
     // MARK: - Other State
     
     @State private var appSettings = AppSettings()
@@ -83,6 +86,7 @@ struct OktanApp: App {
                     .environment(errorHandler)
                     .environment(notificationService)
                     .environment(premiumManager)
+                    .environment(milestoneService)
                     .errorAlert(errorHandler)
                     .opacity(showSplash ? 0 : 1)
                     .modelContainer(modelContainer)

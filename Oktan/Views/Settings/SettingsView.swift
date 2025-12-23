@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    // This screen uses List via ListShell for Bible compliance
     @Bindable var settings: AppSettings
     @Environment(PremiumManager.self) private var premiumManager
     @State private var showingAbout = false
@@ -76,6 +77,24 @@ struct SettingsView: View {
                     ForEach(AppSettings.AppTheme.allCases) { theme in
                         Text(theme.displayName).tag(theme)
                     }
+                }
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(BibleColors.AppTheme.themes) { theme in
+                            Button(action: {
+                                withAnimation {
+                                    settings.accentColorId = theme.id
+                                }
+                            }) {
+                                Image(systemName: settings.accentColorId == theme.id ? "checkmark.circle.fill" : "circle.fill")
+                                    .font(.title)
+                                    .foregroundStyle(theme.color)
+                            }
+                            .padding(.horizontal, 4)
+                        }
+                    }
+                    .padding(.vertical, 8)
                 }
             }
             

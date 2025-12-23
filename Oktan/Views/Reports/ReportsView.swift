@@ -14,7 +14,12 @@ struct ReportsView: View {
     @State private var showingPDFAlert = false
     @State private var csvFileURL: URL?
     @SceneStorage("reportsSelectedTab") private var selectedTabRaw: String = ReportTab.overview.rawValue
-
+    
+    // Interactive Chart State
+    @State private var selectedDate: Date?
+    @State private var selectedMonth: String?
+    @State private var selectedMode: String?
+    
     enum ReportTab: String, CaseIterable {
         case overview = "Overview"
         case trends = "Trends"
@@ -365,6 +370,30 @@ struct ReportsView: View {
                         .lineStyle(StrokeStyle(lineWidth: 2))
                         .interpolationMethod(.catmullRom)
                     }
+                    
+                    if let selectedDate {
+                        RuleMark(x: .value("Selected", selectedDate))
+                            .foregroundStyle(.gray.opacity(0.3))
+                            .offset(y: -10)
+                            .annotation(position: .top, spacing: 0, overflowResolution: .init(x: .fit, y: .fit)) {
+                                if let point = trendData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(point.date.formatted(date: .abbreviated, time: .omitted))
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                        Text(settings.formatEfficiency(settings.convertEfficiency(point.value)))
+                                            .font(.caption.bold())
+                                    }
+                                    .padding()
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(.rect)
+                                }
+                            }
+                    }
+                }
+                .chartXSelection(value: $selectedDate)
+                .chartAnimation {
+                    $0.opacity(0).scale(0.8).offset(y: 10)
                 }
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .month)) { _ in
@@ -395,6 +424,11 @@ struct ReportsView: View {
                         y: .value("Cost", month.totalCost)
                     )
                     .foregroundStyle(.purple)
+                    .opacity(selectedMonth == nil || selectedMonth == month.monthLabel ? 1 : 0.5)
+                }
+                .chartXSelection(value: $selectedMonth)
+                .chartAnimation {
+                    $0.opacity(0).scale(0.8).offset(y: 10)
                 }
                 .chartXAxis {
                     AxisMarks(values: .automatic) { _ in
@@ -431,6 +465,9 @@ struct ReportsView: View {
                     .lineStyle(StrokeStyle(lineWidth: 2))
                     .interpolationMethod(.catmullRom)
                 }
+                .chartAnimation {
+                    $0.opacity(0).scale(0.8).offset(y: 10)
+                }
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .month)) { _ in
                         AxisGridLine()
@@ -458,10 +495,17 @@ struct ReportsView: View {
                         y: .value("Efficiency", settings.convertEfficiency(point.value))
                     )
                     .foregroundStyle(colorForModeCategory(point.category))
+                    .opacity(selectedMode == nil || selectedMode == point.category ? 1 : 0.5)
                     .annotation(position: .top) {
-                        Text(settings.formatEfficiency(settings.convertEfficiency(point.value)))
-                            .font(.caption.weight(.medium))
+                        if selectedMode == point.category || selectedMode == nil {
+                            Text(settings.formatEfficiency(settings.convertEfficiency(point.value)))
+                                .font(.caption.weight(.medium))
+                        }
                     }
+                }
+                .chartXSelection(value: $selectedMode)
+                .chartAnimation {
+                    $0.opacity(0).scale(0.8).offset(y: 10)
                 }
                 .aspectRatio(1.5, contentMode: .fit)
             }
@@ -496,6 +540,9 @@ struct ReportsView: View {
                         y: .value("Count", point.value)
                     )
                     .foregroundStyle(.orange)
+                }
+                .chartAnimation {
+                    $0.opacity(0).scale(0.8).offset(y: 10)
                 }
                 .aspectRatio(2, contentMode: .fit)
             }

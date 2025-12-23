@@ -113,6 +113,14 @@ final class AppSettings {
         didSet { UserDefaults.standard.set(theme.rawValue, forKey: "appTheme") }
     }
     
+    var accentColorId: String {
+        didSet { UserDefaults.standard.set(accentColorId, forKey: "accentColorId") }
+    }
+    
+    var accentColor: Color {
+        BibleColors.AppTheme.themes.first { $0.id == accentColorId }?.color ?? .blue
+    }
+    
     var appLanguage: AppLanguage {
         didSet {
             UserDefaults.standard.set(appLanguage.rawValue, forKey: "appLanguage")
@@ -128,6 +136,7 @@ final class AppSettings {
         self.volumeUnit = VolumeUnit(rawValue: UserDefaults.standard.string(forKey: "volumeUnit") ?? "") ?? .liters
         self.efficiencyUnit = EfficiencyUnit(rawValue: UserDefaults.standard.string(forKey: "efficiencyUnit") ?? "") ?? .litersPer100km
         self.theme = AppTheme(rawValue: UserDefaults.standard.string(forKey: "appTheme") ?? "") ?? .system
+        self.accentColorId = UserDefaults.standard.string(forKey: "accentColorId") ?? "blue"
         self.appLanguage = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system
     }
     

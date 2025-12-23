@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(AppSettings.self) private var settings
+    @Environment(MilestoneService.self) private var milestoneService
     
     // CarRepository: try environment first, fallback to creating new instance
     @Environment(CarRepository.self) private var envCarRepository: CarRepository?
@@ -12,6 +13,8 @@ struct HomeView: View {
     @State private var isPresentingForm = false
     @State private var isPresentingCarSelection = false
     @State private var refreshID = UUID()
+    @State private var animateHero = false
+    @Namespace private var animation
     
     /// The active car repository (from environment or local)
     private var carRepository: CarRepositoryProtocol {
@@ -40,6 +43,18 @@ struct HomeView: View {
                     .id(refreshID)
             }
             .listRowBackground(Color.clear)
+            
+            // Milestones Section
+            if !milestoneService.milestones.isEmpty {
+                Section {
+                    MilestoneRow(milestones: milestoneService.milestones)
+                        .padding(.vertical, 8)
+                } header: {
+                    Text("Milestones")
+                }
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+            }
             
             // Hero Card Section
             Section {
@@ -72,14 +87,11 @@ struct HomeView: View {
             FuelEntryFormView()
                 .presentationDetents([.medium, .large])
         }
-        .sheet(isPresented: $isPresentingCarSelection, onDismiss: {
-            // Reload the local repository if we're using it
-            if localCarRepository != nil {
-                localCarRepository = CarRepository()
-            }
-            refreshID = UUID()
-        }) {
-            CarSelectionView(carRepository: localCarRepository ?? CarRepository())
+        .onChange(of: repository.entries) { _, entries in
+            milestoneService.checkMilestones(entries: entries, summary: summary)
+        }
+        .onAppear {
+            milestoneService.checkMilestones(entries: repository.entries, summary: summary)
         }
     }
     
@@ -96,31 +108,55 @@ struct HomeView: View {
     
     private func carDetailsView(_ car: Car) -> some View {
         VStack(alignment: .leading) {
-            // Car image
-            if let imageData = car.imageData, let uiImage = UIImage(data: imageData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
+                    Text("\(car.year.map { String($0) } ?? "") \(car.make)")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.secondary)
+                    
+                    Text(car.model)
+                        .font(.title.bold())
+                        .foregroundStyle(.primary)
+                }
+                
+                Spacer()
+                
+                Button(action: { isPresentingCarSelection = true }) {
+                    Image(systemName: "ellipsis.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                }
             }
-
-            // Car info
-            Text("\(car.year) \(car.make)")
-                .font(.headline)
-            Text(car.model)
-                .font(.title2.weight(.bold))
-
-            // Tank capacity
-            Text("Tank: \(settings.formatVolume(car.tankCapacity))")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            Button(action: { isPresentingCarSelection = true }) {
-                Label("Change Car", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.subheadline)
+            
+            Spacer(minLength: 20)
+            
+            HStack {
+                VStack(alignment: .leading) {
+                    Label(settings.formatVolume(car.tankCapacity), systemImage: "fuelpump.fill")
+                        .font(.caption.bold())
+                    Text("Tank Capacity")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                // Show car image or placeholder
+                if let imageData = car.imageData, let uiImage = UIImage(data: imageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(.rect)
+                } else {
+                    Image(systemName: "car.side.fill")
+                        .font(.largeTitle)
+                        .foregroundStyle(settings.accentColor.opacity(0.3))
+                }
             }
         }
-        .padding() // No numeric value - Bible compliant
+        .padding()
         .background(.ultraThinMaterial)
+        .clipShape(.rect)
     }
     
     private var addCarButton: some View {
@@ -192,8 +228,16 @@ struct HomeView: View {
             }
         }
         .padding()
-        .background(.tint.opacity(0.1)) // System tint with low opacity
+        .background(BibleColors.heroGradient(for: settings.accentColor))
         .background(.ultraThinMaterial)
+        .clipShape(.rect)
+        .offset(y: animateHero ? 0 : 20)
+        .opacity(animateHero ? 1 : 0)
+        .onAppear {
+            withAnimation(.spring) {
+                animateHero = true
+            }
+        }
         // Accessibility
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Fuel summary")
@@ -265,10 +309,15 @@ struct HomeView: View {
     }
     
     private var quickAddButton: some View {
-        Button(action: { isPresentingForm = true }) {
+        Button(action: { 
+            withAnimation(.spring()) {
+                isPresentingForm = true 
+            }
+        }) {
             Label("Add Fill-up", systemImage: "plus.circle.fill")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
+                .matchedGeometryEffect(id: "addButton", in: animation)
         }
         .buttonStyle(.borderedProminent)
         .accessibilityIdentifier("home-add-fillup-button")

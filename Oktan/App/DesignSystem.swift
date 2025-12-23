@@ -35,6 +35,41 @@ enum BibleColors {
     static let groupedBackground = Color(uiColor: .systemGroupedBackground)
     static let label = Color(uiColor: .label)
     static let secondaryLabel = Color(uiColor: .secondaryLabel)
+
+    /// Dynamic gradient based on a color
+    static func primaryGradient(for color: Color) -> LinearGradient {
+        LinearGradient(
+            colors: [color, color.opacity(0.7)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    /// Lively mesh-like gradient for hero cards
+    static func heroGradient(for color: Color) -> some ShapeStyle {
+        LinearGradient(
+            colors: [color.opacity(0.8), color.opacity(0.4), color.opacity(0.6)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+}
+
+// MARK: - App Themes
+
+struct AppTheme: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let color: Color
+    
+    static let themes: [AppTheme] = [
+        AppTheme(id: "blue", name: "Classic Blue", color: .blue),
+        AppTheme(id: "indigo", name: "Royal Indigo", color: .indigo),
+        AppTheme(id: "teal", name: "Modern Teal", color: .teal),
+        AppTheme(id: "mint", name: "Fresh Mint", color: .mint),
+        AppTheme(id: "orange", name: "Energetic Orange", color: .orange),
+        AppTheme(id: "pink", name: "Vibrant Pink", color: .pink)
+    ]
 }
 
 // MARK: - DesignSystem Namespace for Legacy Compatibility
@@ -85,5 +120,26 @@ extension View {
         self
             .padding()
             .background(.fill)
+    }
+    
+    /// Apply a lively entrance animation to a view
+    func livelyEntrance(delay: Double = 0) -> some View {
+        self.modifier(LivelyEntranceModifier(delay: delay))
+    }
+}
+
+private struct LivelyEntranceModifier: ViewModifier {
+    let delay: Double
+    @State private var isVisible = false
+    
+    func body(content: Content) -> some View {
+        content
+            .offset(y: isVisible ? 0 : 20)
+            .opacity(isVisible ? 1 : 0)
+            .onAppear {
+                withAnimation(.bouncy.delay(delay)) {
+                    isVisible = true
+                }
+            }
     }
 }

@@ -20,30 +20,35 @@ struct RootScaffold: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeNav()
+                .livelyEntrance()
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
                 .tag("home")
 
             TrackingNav()
+                .livelyEntrance()
                 .tabItem {
                     Label("Tracking", systemImage: "fuelpump")
                 }
                 .tag("tracking")
 
             ReportsNav()
+                .livelyEntrance()
                 .tabItem {
                     Label("Reports", systemImage: "chart.bar")
                 }
                 .tag("reports")
 
             ProfileNav()
+                .livelyEntrance()
                 .tabItem {
                     Label("Profile", systemImage: "person")
                 }
                 .tag("profile")
 
             SettingsNav()
+                .livelyEntrance()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }

@@ -134,63 +134,82 @@ struct FuelEntryFormView: View {
     @State private var _notes: String = ""
 
     @State private var errorMessage: String?
+    @State private var showSuccess = false
 
     init(existingEntry: FuelEntry? = nil) {
         self.existingEntry = existingEntry
     }
 
     var body: some View {
-        FormShell(title: isEditing ? "Edit Fill-up" : "Add Fill-up") {
-            Section("Fill-up") {
-                DatePicker("Date", selection: date, displayedComponents: [.date])
-                    .accessibilityLabel("Purchase date")
-                    .accessibilityIdentifier(AccessibilityID.formDatePicker)
+        ZStack {
+            FormShell(title: isEditing ? "Edit Fill-up" : "Add Fill-up") {
+                Section("Fill-up") {
+                    DatePicker("Date", selection: date, displayedComponents: [.date])
+                        .accessibilityLabel("Purchase date")
+                        .accessibilityIdentifier(AccessibilityID.formDatePicker)
 
-                TextField("Liters", text: liters)
-                    .keyboardType(.decimalPad)
-                    .accessibilityLabel("Total liters purchased")
-                    .accessibilityIdentifier(AccessibilityID.formLitersField)
+                    TextField("Liters", text: liters)
+                        .keyboardType(.decimalPad)
+                        .accessibilityLabel("Total liters purchased")
+                        .accessibilityIdentifier(AccessibilityID.formLitersField)
 
-                TextField("Price per liter", text: pricePerLiter)
-                    .keyboardType(.decimalPad)
-                    .accessibilityLabel("Price per liter")
-                    .accessibilityIdentifier(AccessibilityID.formPriceField)
+                    TextField("Price per liter", text: pricePerLiter)
+                        .keyboardType(.decimalPad)
+                        .accessibilityLabel("Price per liter")
+                        .accessibilityIdentifier(AccessibilityID.formPriceField)
 
-                TextField("Gas station", text: gasStation)
-                    .textInputAutocapitalization(.words)
-                    .accessibilityLabel("Gas station name")
-                    .accessibilityIdentifier(AccessibilityID.formStationField)
+                    TextField("Gas station", text: gasStation)
+                        .textInputAutocapitalization(.words)
+                        .accessibilityLabel("Gas station name")
+                        .accessibilityIdentifier(AccessibilityID.formStationField)
 
-                Picker("Drive mode", selection: driveMode) {
-                    ForEach(FuelEntry.DriveMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
+                    Picker("Drive mode", selection: driveMode) {
+                        ForEach(FuelEntry.DriveMode.allCases) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
                     }
+
+                    Toggle("Full refill", isOn: isFull)
                 }
 
-                Toggle("Full refill", isOn: isFull)
-            }
+                Section("Odometer") {
+                    TextField("Start", text: odometerStart)
+                        .keyboardType(.numberPad)
+                        .accessibilityLabel("Odometer start reading")
+                    
+                    TextField("End", text: odometerEnd)
+                        .keyboardType(.numberPad)
+                        .accessibilityLabel("Odometer end reading")
+                }
 
-            Section("Odometer") {
-                TextField("Start", text: odometerStart)
-                    .keyboardType(.numberPad)
-                    .accessibilityLabel("Odometer start reading")
-                
-                TextField("End", text: odometerEnd)
-                    .keyboardType(.numberPad)
-                    .accessibilityLabel("Odometer end reading")
-            }
+                Section("Notes") {
+                    TextField("Optional notes (e.g., AC on, cargo)", text: notes)
+                        .textInputAutocapitalization(.sentences)
+                        .accessibilityLabel("Notes")
+                }
 
-            Section("Notes") {
-                TextField("Optional notes (e.g., AC on, cargo)", text: notes)
-                    .textInputAutocapitalization(.sentences)
-                    .accessibilityLabel("Notes")
+                if let message = errorMessage {
+                    Section {
+                        Text(message)
+                            .foregroundStyle(.red)
+                            .accessibilityLabel("Error: \(message)")
+                    }
+                }
             }
-
-            if let message = errorMessage {
-                Section {
-                    Text(message)
-                        .foregroundStyle(.red)
-                        .accessibilityLabel("Error: \(message)")
+            .opacity(showSuccess ? 0.3 : 1)
+            .disabled(showSuccess)
+            
+            if showSuccess {
+                VStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.largeTitle)
+                        .scaleEffect(2.0)
+                        .foregroundStyle(.green)
+                        .symbolEffect(.bounce, value: showSuccess)
+                    
+                    Text("Saved!")
+                        .font(.title.bold())
+                        .padding(.top)
                 }
             }
         }
@@ -337,7 +356,14 @@ struct FuelEntryFormView: View {
         Task { await notificationService.scheduleInactivityReminder(lastEntryDate: dateValue) }
         
         triggerHapticFeedback()
-        dismiss()
+        
+        withAnimation(.spring()) {
+            showSuccess = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            dismiss()
+        }
     }
 
     private func triggerHapticFeedback() {

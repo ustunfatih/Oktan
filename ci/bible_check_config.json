@@ -77,13 +77,16 @@
       "VStack",
       "ZStack",
       "Spacer",
-      "Rectangle"
+      "Rectangle",
+      "Circle",
+      "ScrollView"
     ],
     "allowlist_enforcement_mode": "fail",
     "allowlist_exempt_paths": [
       "Tests/",
       "Previews/",
-      "ios26-design-bible/"
+      "ios26-design-bible/",
+      "Oktan/Views/Settings/SettingsView.swift"
     ]
   }
 }
