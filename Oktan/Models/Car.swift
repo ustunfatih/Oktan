@@ -35,13 +35,13 @@ struct Car: Identifiable, Codable, Equatable {
 // MARK: - Car Database (Turkey & Qatar Markets)
 
 enum CarDatabase {
-    struct CarModel: Identifiable {
+    struct CarModel: Identifiable, Hashable {
         let id = UUID()
         let name: String
         let tankCapacity: Double // liters
     }
     
-    struct CarMake: Identifiable {
+    struct CarMake: Identifiable, Hashable {
         let id = UUID()
         let name: String
         let models: [CarModel]
