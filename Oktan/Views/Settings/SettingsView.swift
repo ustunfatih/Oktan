@@ -9,137 +9,134 @@ struct SettingsView: View {
     @State private var showingPaywall = false
     
     var body: some View {
-        NavigationStack {
-            List {
-                // Premium Section
-                Section {
-                    if premiumManager.isPremium {
-                        Label("Oktan Pro Active", systemImage: "crown.fill")
-                            .foregroundStyle(.indigo)
-                    } else {
-                        Button(action: { showingPaywall = true }) {
-                            Label("Unlock Oktan Pro", systemImage: "crown")
-                        }
+        ListShell(title: "Settings") {
+            // Premium Section
+            Section {
+                if premiumManager.isPremium {
+                    Label("Oktan Pro Active", systemImage: "crown.fill")
+                        .foregroundStyle(.indigo)
+                } else {
+                    Button(action: { showingPaywall = true }) {
+                        Label("Unlock Oktan Pro", systemImage: "crown")
                     }
-                }
-                
-                // Language Section
-                Section {
-                    Picker("Language", selection: $settings.appLanguage) {
-                        ForEach(AppSettings.AppLanguage.allCases) { language in
-                            Text(language.displayName).tag(language)
-                        }
-                    }
-                    .onChange(of: settings.appLanguage) { _, _ in
-                        showingLanguageNote = true
-                    }
-                } header: {
-                    Text("Language")
-                } footer: {
-                    Text("Changes will take effect after restarting the app.")
-                }
-                
-                // Units Section
-                Section {
-                    Picker("Currency", selection: $settings.currencyCode) {
-                        ForEach(AppSettings.supportedCurrencies, id: \.code) { currency in
-                            Text("\(currency.symbol) \(currency.code) - \(currency.name)")
-                                .tag(currency.code)
-                        }
-                    }
-                    
-                    Picker("Distance", selection: $settings.distanceUnit) {
-                        ForEach(AppSettings.DistanceUnit.allCases) { unit in
-                            Text(unit.displayName).tag(unit)
-                        }
-                    }
-                    
-                    Picker("Volume", selection: $settings.volumeUnit) {
-                        ForEach(AppSettings.VolumeUnit.allCases) { unit in
-                            Text(unit.displayName).tag(unit)
-                        }
-                    }
-                    
-                    Picker("Efficiency", selection: $settings.efficiencyUnit) {
-                        ForEach(AppSettings.EfficiencyUnit.allCases) { unit in
-                            Text(unit.displayName).tag(unit)
-                        }
-                    }
-                } header: {
-                    Text("Units & Currency")
-                } footer: {
-                    Text("Choose your preferred units for tracking fuel consumption.")
-                }
-                
-                // Appearance Section
-                Section("Appearance") {
-                    Picker("Theme", selection: $settings.theme) {
-                        ForEach(AppSettings.AppTheme.allCases) { theme in
-                            Text(theme.displayName).tag(theme)
-                        }
-                    }
-                }
-                
-                // Notifications Section
-                Section("Notifications") {
-                    NotificationLink()
-                }
-                
-                // Data Section
-                Section {
-                    Button(action: { showingCSVImport = true }) {
-                        Label("Import from CSV", systemImage: "square.and.arrow.down")
-                    }
-                    
-                    NavigationLink {
-                        DataManagementView()
-                    } label: {
-                        Label("Data Management", systemImage: "externaldrive")
-                    }
-                } header: {
-                    Text("Data")
-                } footer: {
-                    Text("Import data from other fuel tracking apps or manage your existing data.")
-                }
-                
-                // About Section
-                Section {
-                    Button(action: { showingAbout = true }) {
-                        HStack {
-                            Label("About Oktan", systemImage: "info.circle")
-                            Spacer()
-                            Text(appVersion)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .foregroundStyle(.primary)
-                    
-                    Link(destination: URL(string: "https://github.com/ustunfatih/oktan")!) {
-                        Label("GitHub Repository", systemImage: "link")
-                    }
-                    
-                    Link(destination: URL(string: "mailto:support@oktan.app")!) {
-                        Label("Contact Support", systemImage: "envelope")
-                    }
-                } header: {
-                    Text("About")
                 }
             }
-            .navigationTitle("Settings")
-            .sheet(isPresented: $showingAbout) {
-                AboutView()
+            
+            // Language Section
+            Section {
+                Picker("Language", selection: $settings.appLanguage) {
+                    ForEach(AppSettings.AppLanguage.allCases) { language in
+                        Text(language.displayName).tag(language)
+                    }
+                }
+                .onChange(of: settings.appLanguage) { _, _ in
+                    showingLanguageNote = true
+                }
+            } header: {
+                Text("Language")
+            } footer: {
+                Text("Changes will take effect after restarting the app.")
             }
-            .sheet(isPresented: $showingPaywall) {
-                PaywallView()
+            
+            // Units Section
+            Section {
+                Picker("Currency", selection: $settings.currencyCode) {
+                    ForEach(AppSettings.supportedCurrencies, id: \.code) { currency in
+                        Text("\(currency.symbol) \(currency.code) - \(currency.name)")
+                            .tag(currency.code)
+                    }
+                }
+                
+                Picker("Distance", selection: $settings.distanceUnit) {
+                    ForEach(AppSettings.DistanceUnit.allCases) { unit in
+                        Text(unit.displayName).tag(unit)
+                    }
+                }
+                
+                Picker("Volume", selection: $settings.volumeUnit) {
+                    ForEach(AppSettings.VolumeUnit.allCases) { unit in
+                        Text(unit.displayName).tag(unit)
+                    }
+                }
+                
+                Picker("Efficiency", selection: $settings.efficiencyUnit) {
+                    ForEach(AppSettings.EfficiencyUnit.allCases) { unit in
+                        Text(unit.displayName).tag(unit)
+                    }
+                }
+            } header: {
+                Text("Units & Currency")
+            } footer: {
+                Text("Choose your preferred units for tracking fuel consumption.")
             }
-            .sheet(isPresented: $showingCSVImport) {
-                CSVImportView()
+            
+            // Appearance Section
+            Section("Appearance") {
+                Picker("Theme", selection: $settings.theme) {
+                    ForEach(AppSettings.AppTheme.allCases) { theme in
+                        Text(theme.displayName).tag(theme)
+                    }
+                }
             }
-            .alert("Restart Required", isPresented: $showingLanguageNote) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Please restart the app for language changes to take effect.")
+            
+            // Notifications Section
+            Section("Notifications") {
+                NotificationLink()
             }
+            
+            // Data Section
+            Section {
+                Button(action: { showingCSVImport = true }) {
+                    Label("Import from CSV", systemImage: "square.and.arrow.down")
+                }
+                
+                NavigationLink {
+                    DataManagementView()
+                } label: {
+                    Label("Data Management", systemImage: "externaldrive")
+                }
+            } header: {
+                Text("Data")
+            } footer: {
+                Text("Import data from other fuel tracking apps or manage your existing data.")
+            }
+            
+            // About Section
+            Section {
+                Button(action: { showingAbout = true }) {
+                    HStack {
+                        Label("About Oktan", systemImage: "info.circle")
+                        Spacer()
+                        Text(appVersion)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .foregroundStyle(.primary)
+                
+                Link(destination: URL(string: "https://github.com/ustunfatih/oktan")!) {
+                    Label("GitHub Repository", systemImage: "link")
+                }
+                
+                Link(destination: URL(string: "mailto:support@oktan.app")!) {
+                    Label("Contact Support", systemImage: "envelope")
+                }
+            } header: {
+                Text("About")
+            }
+        }
+        .sheet(isPresented: $showingAbout) {
+            AboutView()
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+        }
+        .sheet(isPresented: $showingCSVImport) {
+            CSVImportView()
+        }
+        .alert("Restart Required", isPresented: $showingLanguageNote) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Please restart the app for language changes to take effect.")
         }
     }
     
@@ -159,7 +156,7 @@ struct DataManagementView: View {
     @State private var csvFileURL: URL?
     
     var body: some View {
-        List {
+        DetailShell(title: "Data Management") {
             Section("Export") {
                 Button(action: exportData) {
                     Label("Export to CSV", systemImage: "square.and.arrow.up")
@@ -175,7 +172,6 @@ struct DataManagementView: View {
                 Text("This will permanently delete all fuel entries. This action cannot be undone.")
             }
         }
-        .navigationTitle("Data Management")
         .sheet(isPresented: $showingExportSheet) {
             if let url = csvFileURL {
                 ShareSheet(items: [url])
@@ -208,53 +204,48 @@ struct AboutView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            List {
-                // App Header Section
-                Section {
-                    VStack {
-                        Image(systemName: "fuelpump.circle.fill")
-                            .font(.largeTitle) // System font - Bible compliant
-                            .foregroundStyle(.tint)
+        DetailShell(title: "About") {
+            // App Header Section
+            Section {
+                VStack {
+                    Image(systemName: "fuelpump.circle.fill")
+                        .font(.largeTitle) // System font - Bible compliant
+                        .foregroundStyle(.tint)
 
-                        Text("Oktan")
-                            .font(.largeTitle.bold())
+                    Text("Oktan")
+                        .font(.largeTitle.bold())
 
-                        Text("Track your fuel. Optimize your drive.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding() // No numeric value - Bible compliant
-                }
-                .listRowBackground(Color.clear)
-
-                // Features Section
-                Section {
-                    featureRow(icon: "fuelpump.fill", title: "Fuel Tracking", description: "Log every fill-up with detailed information")
-                    featureRow(icon: "chart.line.uptrend.xyaxis", title: "Analytics", description: "Track efficiency trends and costs over time")
-                    featureRow(icon: "car.fill", title: "Multiple Cars", description: "Manage fuel logs for all your vehicles")
-                    featureRow(icon: "icloud.fill", title: "Cloud Sync", description: "Keep your data synced across devices")
-                } header: {
-                    Text("Features")
-                }
-
-                // Footer
-                Section {
-                    Text("Made with love for drivers")
-                        .font(.footnote)
+                    Text("Track your fuel. Optimize your drive.")
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
                 }
-                .listRowBackground(Color.clear)
+                .frame(maxWidth: .infinity)
+                .padding() // No numeric value - Bible compliant
             }
-            .listStyle(.insetGrouped)
-            .navigationTitle("About")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
+            .listRowBackground(Color.clear)
+
+            // Features Section
+            Section {
+                featureRow(icon: "fuelpump.fill", title: "Fuel Tracking", description: "Log every fill-up with detailed information")
+                featureRow(icon: "chart.line.uptrend.xyaxis", title: "Analytics", description: "Track efficiency trends and costs over time")
+                featureRow(icon: "car.fill", title: "Multiple Cars", description: "Manage fuel logs for all your vehicles")
+                featureRow(icon: "icloud.fill", title: "Cloud Sync", description: "Keep your data synced across devices")
+            } header: {
+                Text("Features")
+            }
+
+            // Footer
+            Section {
+                Text("Made with love for drivers")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
+            .listRowBackground(Color.clear)
+        }
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") { dismiss() }
             }
         }
     }

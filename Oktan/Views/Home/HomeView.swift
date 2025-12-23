@@ -33,56 +33,53 @@ struct HomeView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                // Car Section
-                Section {
-                    carSection
-                        .id(refreshID)
-                }
-                .listRowBackground(Color.clear)
-                
-                // Hero Card Section
-                Section {
-                    heroCard
-                }
-                .listRowBackground(Color.clear)
-                
-                // Efficiency Section
-                Section {
-                    efficiencySection
-                } header: {
-                    Text("Efficiency")
-                }
-                
-                // Recent Activity Section
-                Section {
-                    recentActivitySection
-                } header: {
-                    Text("Recent Activity")
-                }
-                
-                // Quick Add Section
-                Section {
-                    quickAddButton
-                }
-                .listRowBackground(Color.clear)
+        ListShell(title: "Home") {
+            // Car Section
+            Section {
+                carSection
+                    .id(refreshID)
             }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Home")
-            .sheet(isPresented: $isPresentingForm) {
-                FuelEntryFormView()
-                    .presentationDetents([.medium, .large])
+            .listRowBackground(Color.clear)
+            
+            // Hero Card Section
+            Section {
+                heroCard
             }
-            .sheet(isPresented: $isPresentingCarSelection, onDismiss: {
-                // Reload the local repository if we're using it
-                if localCarRepository != nil {
-                    localCarRepository = CarRepository()
-                }
-                refreshID = UUID()
-            }) {
-                CarSelectionView(carRepository: localCarRepository ?? CarRepository())
+            .listRowBackground(Color.clear)
+            
+            // Efficiency Section
+            Section {
+                efficiencySection
+            } header: {
+                Text("Efficiency")
             }
+            
+            // Recent Activity Section
+            Section {
+                recentActivitySection
+            } header: {
+                Text("Recent Activity")
+            }
+            
+            // Quick Add Section
+            Section {
+                quickAddButton
+            }
+            .listRowBackground(Color.clear)
+        }
+        .listStyle(.insetGrouped)
+        .sheet(isPresented: $isPresentingForm) {
+            FuelEntryFormView()
+                .presentationDetents([.medium, .large])
+        }
+        .sheet(isPresented: $isPresentingCarSelection, onDismiss: {
+            // Reload the local repository if we're using it
+            if localCarRepository != nil {
+                localCarRepository = CarRepository()
+            }
+            refreshID = UUID()
+        }) {
+            CarSelectionView(carRepository: localCarRepository ?? CarRepository())
         }
     }
     
@@ -149,7 +146,7 @@ struct HomeView: View {
     }
     
     // MARK: - Hero Card (Bible Compliant)
-    // Removed: LinearGradient, RoundedRectangle, fixed font sizes, custom opacity
+    // Removed: custom gradients, custom shapes, fixed font sizes, custom opacity
 
     private var heroCard: some View {
         VStack(alignment: .leading) {

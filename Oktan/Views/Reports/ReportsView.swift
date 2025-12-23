@@ -2,8 +2,8 @@ import Charts
 import SwiftUI
 
 // MARK: - iOS 26 Design Bible Compliant ReportsView
-// Removed: ScrollView + VStack, DesignSystem.Spacing.*, DesignSystem.ColorPalette.*,
-//          .frame(height: N), .tint(), .glassCard(), LinearGradient
+// Removed: non-List containers, numeric spacing, custom color palettes,
+//          fixed frames, color overrides, custom modifiers, gradients
 
 struct ReportsView: View {
     @EnvironmentObject private var repository: FuelRepository
@@ -22,61 +22,58 @@ struct ReportsView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            let summary = repository.summary()
+        let summary = repository.summary()
 
-            List {
-                // Tab Picker Section
-                Section {
-                    Picker("Report Type", selection: $selectedTab) {
-                        ForEach(ReportTab.allCases, id: \.self) { tab in
-                            Text(tab.rawValue).tag(tab)
-                        }
+        ListShell(title: "Reports") {
+            // Tab Picker Section
+            Section {
+                Picker("Report Type", selection: $selectedTab) {
+                    ForEach(ReportTab.allCases, id: \.self) { tab in
+                        Text(tab.rawValue).tag(tab)
                     }
-                    .pickerStyle(.segmented)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets())
                 }
+                .pickerStyle(.segmented)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+            }
 
-                // Content based on selected tab
-                switch selectedTab {
-                case .overview:
-                    overviewContent(summary: summary)
-                case .trends:
-                    trendsContent()
-                case .patterns:
-                    patternsContent()
-                }
+            // Content based on selected tab
+            switch selectedTab {
+            case .overview:
+                overviewContent(summary: summary)
+            case .trends:
+                trendsContent()
+            case .patterns:
+                patternsContent()
             }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Reports")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button(action: exportData) {
-                            Label("Export to CSV", systemImage: "doc.text")
-                        }
-                        .disabled(repository.entries.isEmpty)
-                    } label: {
-                        Image(systemName: "square.and.arrow.up")
+        }
+        .listStyle(.insetGrouped)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button(action: exportData) {
+                        Label("Export to CSV", systemImage: "doc.text")
                     }
-                    .accessibilityLabel("Export options")
-                    .accessibilityIdentifier(AccessibilityID.reportsExportButton)
+                    .disabled(repository.entries.isEmpty)
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
                 }
+                .accessibilityLabel("Export options")
+                .accessibilityIdentifier(AccessibilityID.reportsExportButton)
             }
-            .sheet(isPresented: $showingExportSheet) {
-                if let url = csvFileURL {
-                    ShareSheet(items: [url])
-                }
+        }
+        .sheet(isPresented: $showingExportSheet) {
+            if let url = csvFileURL {
+                ShareSheet(items: [url])
             }
-            .alert("PDF Export", isPresented: $showingPDFAlert) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text("PDF export will be available in the next update. Please use CSV export for now.")
-            }
-            .sheet(isPresented: $showingPaywall) {
-                PaywallView()
-            }
+        }
+        .alert("PDF Export", isPresented: $showingPDFAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("PDF export will be available in the next update. Please use CSV export for now.")
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
     }
 

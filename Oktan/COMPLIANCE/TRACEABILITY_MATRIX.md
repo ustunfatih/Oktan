@@ -48,9 +48,9 @@ UINavigationBarAppearance, UIAppearance, .toolbarBackground()
 
 | Screen | Shell Type | Navigation | System Components | UIKit Bridge | Compliance |
 |--------|------------|------------|-------------------|--------------|------------|
-| HomeScreen | ListShell | Tab | List, Section, Button, Text, Image, Label, NavigationStack, NavigationLink | None | NON-COMPLIANT |
+| HomeScreen | ListShell | Tab | List, Section, Button, Text, Image, Label, NavigationStack, NavigationLink | None | PARTIAL |
 | TrackingScreen | ListShell | Tab | List, Section, ForEach, Button, Label, NavigationStack, .sheet, .swipeActions | None | PARTIAL |
-| ReportsScreen | ListShell | Tab | Picker, ScrollView, VStack, Chart, ProgressView, NavigationStack, Menu, .sheet | None | NON-COMPLIANT |
+| ReportsScreen | ListShell | Tab | List, Picker, Chart, ProgressView, NavigationStack, Menu, .sheet | None | PARTIAL |
 | ProfileScreen | ListShell | Tab | List, Section, Button, Label, Text, Image, NavigationStack, .confirmationDialog | AuthenticationServices | PARTIAL |
 | SettingsScreen | ListShell | Tab | List, Section, Picker, Toggle, Button, Link, NavigationStack, NavigationLink, .sheet, .alert | None | PARTIAL |
 
@@ -58,9 +58,9 @@ UINavigationBarAppearance, UIAppearance, .toolbarBackground()
 
 | Screen | Shell Type | Navigation | System Components | UIKit Bridge | Compliance |
 |--------|------------|------------|-------------------|--------------|------------|
-| NotificationSettingsScreen | ListShell | Push | List, Section, Picker, Toggle, Button, .alert | UserNotifications | PARTIAL |
-| DataManagementScreen | ListShell | Push | List, Section, Button, .sheet, .confirmationDialog | None | COMPLIANT |
-| AboutScreen | ListShell | Sheet | List, Section, Text, Image, Label, .toolbar | None | PARTIAL |
+| NotificationSettingsScreen | DetailShell | Push | List, Section, Picker, Toggle, Button, .alert | UserNotifications | PARTIAL |
+| DataManagementScreen | DetailShell | Push | List, Section, Button, .sheet, .confirmationDialog | None | COMPLIANT |
+| AboutScreen | DetailShell | Sheet | List, Section, Text, Image, Label, .toolbar | None | PARTIAL |
 
 ### Modal/Sheet Screens
 
@@ -70,7 +70,7 @@ UINavigationBarAppearance, UIAppearance, .toolbarBackground()
 | CarSelectionScreen | SearchShell | Sheet | List, NavigationStack, NavigationLink, .searchable, .toolbar | None | PARTIAL |
 | CarModelSelectionScreen | ListShell | Push | List, NavigationLink | None | COMPLIANT |
 | CarYearSelectionScreen | ListShell | Push | List, NavigationLink | None | COMPLIANT |
-| CarConfirmationScreen | FormShell | Push | Form, Section, TextField, Button, ProgressView, LabeledContent | UINotificationFeedbackGenerator | NON-COMPLIANT |
+| CarConfirmationScreen | FormShell | Push | Form, Section, TextField, Button, ProgressView, LabeledContent | UINotificationFeedbackGenerator | PARTIAL |
 | CSVImportScreen | FormShell | Sheet | Form, List, Section, Picker, Toggle, Button, ProgressView, .fileImporter, .toolbar | UniformTypeIdentifiers | PARTIAL |
 | PaywallScreen | N/A | Sheet | RevenueCatUI.PaywallView | RevenueCat | EXEMPT |
 | SplashScreen | N/A | Overlay | ZStack, GeometryReader, Text, Image | None | NON-COMPLIANT |
@@ -91,19 +91,9 @@ ContentUnavailableView, ForEach
 **VIOLATIONS:**
 | Component/Modifier | Line | Issue |
 |--------------------|------|-------|
-| LinearGradient | 202 | Custom gradient |
-| RoundedRectangle(cornerRadius: 16) | 208 | Numeric corner radius |
-| .padding() | 125, 200 | OK (no numeric) |
-| .background(.ultraThinMaterial) | 126 | OK |
-| .foregroundStyle(.white.opacity(0.8)) | 159 | Custom opacity |
-| .font(.system(size: 48)) | 133 | Fixed font size |
-| .font(.system(size: 36)) | 162 | Fixed font size |
+| None | - | All violations fixed |
 
-**Required Changes:**
-1. Remove LinearGradient hero card -> Use Section with semantic styling
-2. Remove RoundedRectangle -> Use system card styling
-3. Remove fixed font sizes -> Use semantic fonts
-4. Wrap in ListShell
+**Status:** ✅ ListShell implemented, all violations fixed
 
 ---
 
@@ -120,11 +110,9 @@ ContentUnavailableView, .swipeActions, .sheet,
 **VIOLATIONS:**
 | Component/Modifier | Line | Issue |
 |--------------------|------|-------|
-| None critical | - | Shell wrapper missing |
+| None | - | All violations fixed |
 
-**Required Changes:**
-1. Wrap content in ListShell(title: "Tracking")
-2. Add @SceneStorage for state
+**Status:** ✅ ListShell implemented, state restoration via RootScaffold
 
 ---
 
@@ -132,35 +120,16 @@ ContentUnavailableView, .swipeActions, .sheet,
 
 **Current Components:**
 ```swift
-NavigationStack, Picker, ScrollView, VStack,
-Chart (BarMark, LineMark, AreaMark, PointMark, RuleMark),
-LazyVGrid, Text, Image, Button, Menu,
-ProgressView, HStack, Spacer, ForEach
+NavigationStack, List, Picker, Chart (BarMark, LineMark, AreaMark, PointMark, RuleMark),
+Text, Image, Button, Menu, ProgressView, HStack, Spacer, ForEach
 ```
 
 **VIOLATIONS:**
 | Component/Modifier | Line | Issue |
 |--------------------|------|-------|
-| ScrollView + VStack | 35 | Should be List |
-| DesignSystem.Spacing.large | 32-46 | Numeric spacing |
-| DesignSystem.Spacing.medium | Multiple | Numeric spacing |
-| DesignSystem.ColorPalette.* | Multiple | Hex colors |
-| .frame(height: 180) | 222 | Fixed height |
-| .frame(width: 10, height: 10) | 246 | Fixed size |
-| .frame(width: 60) | 270 | Fixed width |
-| .frame(height: 150) | 349 | Fixed height |
-| .tint() | 310, 324, 367 | Color override |
-| .glassCard() | Multiple | Custom modifier |
-| GeometryReader | 88, 185 | Layout violation |
+| None | - | All violations fixed |
 
-**Required Changes:**
-1. Replace ScrollView with List
-2. Remove all DesignSystem.Spacing references
-3. Remove all DesignSystem.ColorPalette references
-4. Remove all fixed .frame() calls
-5. Remove .tint() calls
-6. Remove .glassCard() modifier
-7. Use system colors (Color.primary, .secondary, etc.)
+**Status:** ✅ ListShell implemented, all DesignSystem references removed, system colors used
 
 ---
 
@@ -176,13 +145,9 @@ Text, Image, Label, Button, ProgressView,
 **VIOLATIONS:**
 | Component/Modifier | Line | Issue |
 |--------------------|------|-------|
-| LinearGradient | 33 | Avatar gradient |
-| Circle().fill() | 32 | OK |
-| .frame(width: 60, height: 60) | 39 | Fixed size |
+| None | - | All violations fixed |
 
-**Required Changes:**
-1. Remove LinearGradient -> Use system color
-2. Remove fixed frame -> Use dynamic sizing
+**Status:** ✅ ListShell implemented, all violations fixed
 
 ---
 
@@ -198,10 +163,9 @@ NavigationLink, .sheet, .alert
 **VIOLATIONS:**
 | Component/Modifier | Line | Issue |
 |--------------------|------|-------|
-| LinearGradient (AboutView) | 218 | App icon gradient |
+| None | - | All violations fixed |
 
-**Required Changes:**
-1. Remove LinearGradient in AboutView
+**Status:** ✅ ListShell implemented, AboutView uses DetailShell, all violations fixed
 
 ---
 
@@ -252,10 +216,10 @@ VStack, Label, Text, .background(), .clipShape()
 
 | Shell Type | Screens |
 |------------|---------|
-| **ListShell** | HomeScreen, TrackingScreen, ReportsScreen, ProfileScreen, SettingsScreen, NotificationSettingsScreen, DataManagementScreen, AboutScreen, CarModelSelectionScreen, CarYearSelectionScreen |
+| **ListShell** | HomeScreen, TrackingScreen, ReportsScreen, ProfileScreen, SettingsScreen, CarModelSelectionScreen, CarYearSelectionScreen |
 | **FormShell** | FuelEntryFormScreen, CarConfirmationScreen, CSVImportScreen |
 | **SearchShell** | CarSelectionScreen |
-| **DetailShell** | (none currently - for pushed detail views) |
+| **DetailShell** | NotificationSettingsScreen, DataManagementScreen, AboutScreen |
 | **N/A** | PaywallScreen (RevenueCat), SplashScreen (special) |
 
 ---
@@ -278,9 +242,11 @@ All UIKit bridging is for system APIs that have no SwiftUI equivalent. No custom
 
 | Status | Count | Screens |
 |--------|-------|---------|
-| COMPLIANT | 2 | CarModelSelectionScreen, CarYearSelectionScreen |
-| PARTIAL | 8 | TrackingScreen, SettingsScreen, NotificationSettingsScreen, DataManagementScreen, FuelEntryFormScreen, CarSelectionScreen, CSVImportScreen, ProfileScreen |
-| NON-COMPLIANT | 5 | HomeScreen, ReportsScreen, CarConfirmationScreen, SplashScreen, AboutScreen (in SettingsView) |
+| COMPLIANT | 2 | CarModelSelectionScreen, CarYearSelectionScreen, DataManagementScreen |
+| PARTIAL | 11 | HomeScreen, TrackingScreen, ReportsScreen, ProfileScreen, SettingsScreen, NotificationSettingsScreen, FuelEntryFormScreen, CarSelectionScreen, CarConfirmationScreen, CSVImportScreen, AboutScreen |
+| NON-COMPLIANT | 1 | SplashScreen (special case - overlay screen) |
 | EXEMPT | 1 | PaywallScreen (third-party) |
 
 **Total: 16 screens audited**
+
+**Progress:** All major screens now use Shell wrappers and have state restoration implemented. Remaining work: accessibility testing and dynamic type verification.

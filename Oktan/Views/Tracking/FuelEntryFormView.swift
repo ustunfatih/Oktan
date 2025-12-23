@@ -8,15 +8,130 @@ struct FuelEntryFormView: View {
     private let existingEntry: FuelEntry?
     private var isEditing: Bool { existingEntry != nil }
 
-    @State private var date: Date = .now
-    @State private var odometerStart: String = ""
-    @State private var odometerEnd: String = ""
-    @State private var liters: String = ""
-    @State private var pricePerLiter: String = ""
-    @State private var gasStation: String = ""
-    @State private var driveMode: FuelEntry.DriveMode = .normal
-    @State private var isFull: Bool = true
-    @State private var notes: String = ""
+    // Draft state persistence (only for new entries, not editing)
+    @SceneStorage("fuelEntryForm.date") private var draftDate: Date = .now
+    @SceneStorage("fuelEntryForm.odometerStart") private var draftOdometerStart: String = ""
+    @SceneStorage("fuelEntryForm.odometerEnd") private var draftOdometerEnd: String = ""
+    @SceneStorage("fuelEntryForm.liters") private var draftLiters: String = ""
+    @SceneStorage("fuelEntryForm.pricePerLiter") private var draftPricePerLiter: String = ""
+    @SceneStorage("fuelEntryForm.gasStation") private var draftGasStation: String = ""
+    @SceneStorage("fuelEntryForm.driveMode") private var draftDriveModeRaw: String = FuelEntry.DriveMode.normal.rawValue
+    @SceneStorage("fuelEntryForm.isFull") private var draftIsFull: Bool = true
+    @SceneStorage("fuelEntryForm.notes") private var draftNotes: String = ""
+    
+    // Computed properties that use draft state for new entries, or direct state for editing
+    private var date: Binding<Date> {
+        if isEditing {
+            return Binding(
+                get: { _date },
+                set: { _date = $0 }
+            )
+        } else {
+            return $draftDate
+        }
+    }
+    
+    private var odometerStart: Binding<String> {
+        if isEditing {
+            return Binding(
+                get: { _odometerStart },
+                set: { _odometerStart = $0 }
+            )
+        } else {
+            return $draftOdometerStart
+        }
+    }
+    
+    private var odometerEnd: Binding<String> {
+        if isEditing {
+            return Binding(
+                get: { _odometerEnd },
+                set: { _odometerEnd = $0 }
+            )
+        } else {
+            return $draftOdometerEnd
+        }
+    }
+    
+    private var liters: Binding<String> {
+        if isEditing {
+            return Binding(
+                get: { _liters },
+                set: { _liters = $0 }
+            )
+        } else {
+            return $draftLiters
+        }
+    }
+    
+    private var pricePerLiter: Binding<String> {
+        if isEditing {
+            return Binding(
+                get: { _pricePerLiter },
+                set: { _pricePerLiter = $0 }
+            )
+        } else {
+            return $draftPricePerLiter
+        }
+    }
+    
+    private var gasStation: Binding<String> {
+        if isEditing {
+            return Binding(
+                get: { _gasStation },
+                set: { _gasStation = $0 }
+            )
+        } else {
+            return $draftGasStation
+        }
+    }
+    
+    private var driveMode: Binding<FuelEntry.DriveMode> {
+        if isEditing {
+            return Binding(
+                get: { _driveMode },
+                set: { _driveMode = $0 }
+            )
+        } else {
+            return Binding(
+                get: { FuelEntry.DriveMode(rawValue: draftDriveModeRaw) ?? .normal },
+                set: { draftDriveModeRaw = $0.rawValue }
+            )
+        }
+    }
+    
+    private var isFull: Binding<Bool> {
+        if isEditing {
+            return Binding(
+                get: { _isFull },
+                set: { _isFull = $0 }
+            )
+        } else {
+            return $draftIsFull
+        }
+    }
+    
+    private var notes: Binding<String> {
+        if isEditing {
+            return Binding(
+                get: { _notes },
+                set: { _notes = $0 }
+            )
+        } else {
+            return $draftNotes
+        }
+    }
+    
+    // Direct state for editing mode
+    @State private var _date: Date = .now
+    @State private var _odometerStart: String = ""
+    @State private var _odometerEnd: String = ""
+    @State private var _liters: String = ""
+    @State private var _pricePerLiter: String = ""
+    @State private var _gasStation: String = ""
+    @State private var _driveMode: FuelEntry.DriveMode = .normal
+    @State private var _isFull: Bool = true
+    @State private var _notes: String = ""
 
     @State private var errorMessage: String?
 
@@ -25,134 +140,172 @@ struct FuelEntryFormView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("Fill-up") {
-                    DatePicker("Date", selection: $date, displayedComponents: [.date])
-                        .accessibilityLabel("Purchase date")
-                        .accessibilityIdentifier(AccessibilityID.formDatePicker)
+        FormShell(title: isEditing ? "Edit Fill-up" : "Add Fill-up") {
+            Section("Fill-up") {
+                DatePicker("Date", selection: date, displayedComponents: [.date])
+                    .accessibilityLabel("Purchase date")
+                    .accessibilityIdentifier(AccessibilityID.formDatePicker)
 
-                    TextField("Liters", text: $liters)
-                        .keyboardType(.decimalPad)
-                        .accessibilityLabel("Total liters purchased")
-                        .accessibilityIdentifier(AccessibilityID.formLitersField)
+                TextField("Liters", text: liters)
+                    .keyboardType(.decimalPad)
+                    .accessibilityLabel("Total liters purchased")
+                    .accessibilityIdentifier(AccessibilityID.formLitersField)
 
-                    TextField("Price per liter", text: $pricePerLiter)
-                        .keyboardType(.decimalPad)
-                        .accessibilityLabel("Price per liter")
-                        .accessibilityIdentifier(AccessibilityID.formPriceField)
+                TextField("Price per liter", text: pricePerLiter)
+                    .keyboardType(.decimalPad)
+                    .accessibilityLabel("Price per liter")
+                    .accessibilityIdentifier(AccessibilityID.formPriceField)
 
-                    TextField("Gas station", text: $gasStation)
-                        .textInputAutocapitalization(.words)
-                        .accessibilityLabel("Gas station name")
-                        .accessibilityIdentifier(AccessibilityID.formStationField)
+                TextField("Gas station", text: gasStation)
+                    .textInputAutocapitalization(.words)
+                    .accessibilityLabel("Gas station name")
+                    .accessibilityIdentifier(AccessibilityID.formStationField)
 
-                    Picker("Drive mode", selection: $driveMode) {
-                        ForEach(FuelEntry.DriveMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode)
-                        }
+                Picker("Drive mode", selection: driveMode) {
+                    ForEach(FuelEntry.DriveMode.allCases) { mode in
+                        Text(mode.rawValue).tag(mode)
                     }
-
-                    Toggle("Full refill", isOn: $isFull)
                 }
 
-                Section("Odometer") {
-                    TextField("Start", text: $odometerStart)
-                        .keyboardType(.numberPad)
-                        .accessibilityLabel("Odometer start reading")
-                    
-                    TextField("End", text: $odometerEnd)
-                        .keyboardType(.numberPad)
-                        .accessibilityLabel("Odometer end reading")
-                }
+                Toggle("Full refill", isOn: isFull)
+            }
 
-                Section("Notes") {
-                    TextField("Optional notes (e.g., AC on, cargo)", text: $notes)
-                        .textInputAutocapitalization(.sentences)
-                        .accessibilityLabel("Notes")
-                }
+            Section("Odometer") {
+                TextField("Start", text: odometerStart)
+                    .keyboardType(.numberPad)
+                    .accessibilityLabel("Odometer start reading")
+                
+                TextField("End", text: odometerEnd)
+                    .keyboardType(.numberPad)
+                    .accessibilityLabel("Odometer end reading")
+            }
 
-                if let message = errorMessage {
-                    Section {
-                        Text(message)
-                            .foregroundStyle(.red)
-                            .accessibilityLabel("Error: \(message)")
-                    }
+            Section("Notes") {
+                TextField("Optional notes (e.g., AC on, cargo)", text: notes)
+                    .textInputAutocapitalization(.sentences)
+                    .accessibilityLabel("Notes")
+            }
+
+            if let message = errorMessage {
+                Section {
+                    Text(message)
+                        .foregroundStyle(.red)
+                        .accessibilityLabel("Error: \(message)")
                 }
             }
-            .navigationTitle(isEditing ? "Edit Fill-up" : "Add Fill-up")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", action: { dismiss() })
-                        .accessibilityIdentifier(AccessibilityID.formCloseButton)
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(action: save) {
-                        Label("Save", systemImage: "checkmark.circle.fill")
-                    }
-                    .disabled(!isValidForm)
-                    .accessibilityLabel(isValidForm ? "Save fill-up" : "Save (disabled, complete required fields)")
-                    .accessibilityIdentifier(AccessibilityID.formSaveButton)
-                }
-            }
-            .onAppear(perform: setupForm)
         }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close", action: { dismiss() })
+                    .accessibilityIdentifier(AccessibilityID.formCloseButton)
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button(action: save) {
+                    Label("Save", systemImage: "checkmark.circle.fill")
+                }
+                .disabled(!isValidForm)
+                .accessibilityLabel(isValidForm ? "Save fill-up" : "Save (disabled, complete required fields)")
+                .accessibilityIdentifier(AccessibilityID.formSaveButton)
+            }
+        }
+        .onAppear(perform: setupForm)
     }
 
     private var isValidForm: Bool {
-        guard Double(liters) ?? 0 > 0, Double(pricePerLiter) ?? 0 > 0 else { return false }
-        if let start = Double(odometerStart), let end = Double(odometerEnd), end < start { return false }
+        let litersValue = isEditing ? _liters : draftLiters
+        let priceValue = isEditing ? _pricePerLiter : draftPricePerLiter
+        let startValue = isEditing ? _odometerStart : draftOdometerStart
+        let endValue = isEditing ? _odometerEnd : draftOdometerEnd
+        
+        guard Double(litersValue) ?? 0 > 0, Double(priceValue) ?? 0 > 0 else { return false }
+        if let start = Double(startValue), let end = Double(endValue), end < start { return false }
         return true
     }
 
     private func setupForm() {
         if let entry = existingEntry {
-            // Editing existing entry
-            date = entry.date
-            if let start = entry.odometerStart { odometerStart = String(Int(start)) }
-            if let end = entry.odometerEnd { odometerEnd = String(Int(end)) }
-            liters = String(format: "%.2f", entry.totalLiters)
-            pricePerLiter = String(format: "%.2f", entry.pricePerLiter)
-            gasStation = entry.gasStation
-            driveMode = entry.driveMode
-            isFull = entry.isFullRefill
-            notes = entry.notes ?? ""
+            // Editing existing entry - use direct state
+            _date = entry.date
+            if let start = entry.odometerStart { _odometerStart = String(Int(start)) }
+            if let end = entry.odometerEnd { _odometerEnd = String(Int(end)) }
+            _liters = String(format: "%.2f", entry.totalLiters)
+            _pricePerLiter = String(format: "%.2f", entry.pricePerLiter)
+            _gasStation = entry.gasStation
+            _driveMode = entry.driveMode
+            _isFull = entry.isFullRefill
+            _notes = entry.notes ?? ""
         } else {
-            // New entry - prefill from last entry
-            prefillFromLastEntry()
+            // New entry - prefill from last entry if draft is empty
+            if draftLiters.isEmpty && draftPricePerLiter.isEmpty {
+                prefillFromLastEntry()
+            }
+            // Otherwise, draft state is already restored from @SceneStorage
         }
     }
 
     private func prefillFromLastEntry() {
         guard let last = repository.entries.sorted(by: { $0.date < $1.date }).last else { return }
-        if let end = last.odometerEnd { odometerStart = String(Int(end)) }
-        pricePerLiter = String(format: "%.2f", last.pricePerLiter)
-        driveMode = last.driveMode
-        gasStation = last.gasStation
-        isFull = last.isFullRefill
+        if let end = last.odometerEnd { draftOdometerStart = String(Int(end)) }
+        draftPricePerLiter = String(format: "%.2f", last.pricePerLiter)
+        draftDriveModeRaw = last.driveMode.rawValue
+        draftGasStation = last.gasStation
+        draftIsFull = last.isFullRefill
     }
 
     private func save() {
-        guard let litersValue = Double(liters), litersValue > 0 else {
+        // Get values from appropriate source (draft or direct state)
+        let litersValue: String
+        let priceValue: String
+        let dateValue: Date
+        let odometerStartValue: String
+        let odometerEndValue: String
+        let gasStationValue: String
+        let driveModeValue: FuelEntry.DriveMode
+        let isFullValue: Bool
+        let notesValue: String
+        
+        if isEditing {
+            litersValue = _liters
+            priceValue = _pricePerLiter
+            dateValue = _date
+            odometerStartValue = _odometerStart
+            odometerEndValue = _odometerEnd
+            gasStationValue = _gasStation
+            driveModeValue = _driveMode
+            isFullValue = _isFull
+            notesValue = _notes
+        } else {
+            litersValue = draftLiters
+            priceValue = draftPricePerLiter
+            dateValue = draftDate
+            odometerStartValue = draftOdometerStart
+            odometerEndValue = draftOdometerEnd
+            gasStationValue = draftGasStation
+            driveModeValue = FuelEntry.DriveMode(rawValue: draftDriveModeRaw) ?? .normal
+            isFullValue = draftIsFull
+            notesValue = draftNotes
+        }
+        
+        guard let litersDouble = Double(litersValue), litersDouble > 0 else {
             errorMessage = "Please enter liters purchased."
             return
         }
-        guard let price = Double(pricePerLiter), price > 0 else {
+        guard let price = Double(priceValue), price > 0 else {
             errorMessage = "Please enter a valid price per liter."
             return
         }
 
         let entry = FuelEntry(
             id: existingEntry?.id ?? UUID(),
-            date: date,
-            odometerStart: Double(odometerStart),
-            odometerEnd: Double(odometerEnd),
-            totalLiters: litersValue,
+            date: dateValue,
+            odometerStart: Double(odometerStartValue),
+            odometerEnd: Double(odometerEndValue),
+            totalLiters: litersDouble,
             pricePerLiter: price,
-            gasStation: gasStation.isEmpty ? "Unknown" : gasStation,
-            driveMode: driveMode,
-            isFullRefill: isFull,
-            notes: notes.isEmpty ? nil : notes
+            gasStation: gasStationValue.isEmpty ? "Unknown" : gasStationValue,
+            driveMode: driveModeValue,
+            isFullRefill: isFullValue,
+            notes: notesValue.isEmpty ? nil : notesValue
         )
 
         if isEditing {
@@ -168,10 +321,20 @@ struct FuelEntryFormView: View {
                 }
                 return
             }
+            
+            // Clear draft state after successful save
+            draftOdometerStart = ""
+            draftOdometerEnd = ""
+            draftLiters = ""
+            draftPricePerLiter = ""
+            draftGasStation = ""
+            draftDriveModeRaw = FuelEntry.DriveMode.normal.rawValue
+            draftIsFull = true
+            draftNotes = ""
         }
 
         // Reset inactivity reminder since user just logged an entry
-        Task { await notificationService.scheduleInactivityReminder(lastEntryDate: date) }
+        Task { await notificationService.scheduleInactivityReminder(lastEntryDate: dateValue) }
         
         triggerHapticFeedback()
         dismiss()

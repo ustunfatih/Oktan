@@ -141,5 +141,5 @@ struct OktanApp: App {
 // This is kept for reference but RootScaffold is now the primary tab container.
 // RootScaffold provides:
 // - @SceneStorage for tab persistence (Bible Article VI compliance)
-// - No .tint() override (Bible Article III compliance)
+// - No color overrides (Bible Article III compliance)
 // - Navigation path persistence for each tab

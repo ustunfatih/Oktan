@@ -5,7 +5,7 @@ struct NotificationSettingsView: View {
     @State private var showingPermissionAlert = false
     
     var body: some View {
-        List {
+        DetailShell(title: "Reminders") {
             // Authorization Section
             authorizationSection
             
@@ -15,7 +15,6 @@ struct NotificationSettingsView: View {
                 inactivitySection
             }
         }
-        .navigationTitle("Reminders")
         .onAppear {
             Task { await notificationService.checkAuthorizationStatus() }
         }
@@ -37,18 +36,18 @@ struct NotificationSettingsView: View {
             case .authorized:
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(DesignSystem.ColorPalette.successGreen)
+                        .foregroundStyle(Color.green)
                     Text("Notifications Enabled")
-                        .foregroundStyle(DesignSystem.ColorPalette.label)
+                        .foregroundStyle(Color(uiColor: .label))
                 }
                 
             case .denied:
-                VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
+                VStack(alignment: .leading) {
                     HStack {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(DesignSystem.ColorPalette.errorRed)
+                            .foregroundStyle(Color.red)
                         Text("Notifications Disabled")
-                            .foregroundStyle(DesignSystem.ColorPalette.label)
+                            .foregroundStyle(Color(uiColor: .label))
                     }
                     
                     Button("Enable in Settings") {
@@ -61,7 +60,7 @@ struct NotificationSettingsView: View {
                 Button(action: requestPermission) {
                     HStack {
                         Image(systemName: "bell.badge")
-                            .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
+                            .foregroundStyle(Color.blue)
                         Text("Enable Notifications")
                         Spacer()
                         if notificationService.isPendingAuthorization {
@@ -74,7 +73,7 @@ struct NotificationSettingsView: View {
             case .provisional, .ephemeral:
                 HStack {
                     Image(systemName: "bell.badge")
-                        .foregroundStyle(DesignSystem.ColorPalette.warningOrange)
+                        .foregroundStyle(Color.orange)
                     Text("Limited Notifications")
                 }
                 
