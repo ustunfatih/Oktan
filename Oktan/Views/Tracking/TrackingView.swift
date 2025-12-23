@@ -8,62 +8,59 @@ struct TrackingView: View {
     @State private var entryToEdit: FuelEntry?
 
     var body: some View {
-        NavigationStack {
-            List {
-                // Header Section
-                Section {
-                    Text("Log each refuel with a few taps. We calculate distance, efficiency, and cost automatically.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
-                
-                // Entries Section
-                Section {
-                    if repository.entries.isEmpty {
-                        ContentUnavailableView {
-                            Label("No Entries Yet", systemImage: "fuelpump")
-                        } description: {
-                            Text("Tap Add Fill-up to start tracking your fuel efficiency.")
-                        }
-                    } else {
-                        ForEach(repository.entries.sorted(by: { $0.date > $1.date })) { entry in
-                            FuelEntryRow(
-                                entry: entry,
-                                settings: settings,
-                                onEdit: { entryToEdit = entry },
-                                onDelete: { repository.delete(entry) }
-                            )
-                        }
+        ListShell(title: "Tracking") {
+            // Header Section
+            Section {
+                Text("Log each refuel with a few taps. We calculate distance, efficiency, and cost automatically.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+            
+            // Entries Section
+            Section {
+                if repository.entries.isEmpty {
+                    ContentUnavailableView {
+                        Label("No Entries Yet", systemImage: "fuelpump")
+                    } description: {
+                        Text("Tap Add Fill-up to start tracking your fuel efficiency.")
                     }
-                } header: {
-                    Text("Recent fill-ups")
-                }
-            }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Tracking")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: { isPresentingForm = true }) {
-                        Label("Add Fill-up", systemImage: "plus.circle.fill")
+                } else {
+                    ForEach(repository.entries.sorted(by: { $0.date > $1.date })) { entry in
+                        FuelEntryRow(
+                            entry: entry,
+                            settings: settings,
+                            onEdit: { entryToEdit = entry },
+                            onDelete: { repository.delete(entry) }
+                        )
                     }
-                    .accessibilityLabel("Add new fill-up")
-                    .accessibilityHint("Opens a form to log a new refuel")
-                    .accessibilityIdentifier(AccessibilityID.trackingAddButton)
                 }
+            } header: {
+                Text("Recent fill-ups")
             }
-            .sheet(isPresented: $isPresentingForm) {
-                FuelEntryFormView()
-                    .presentationDetents([.medium, .large])
-            }
-            .sheet(item: $entryToEdit) { entry in
-                FuelEntryFormView(existingEntry: entry)
-                    .presentationDetents([.medium, .large])
-            }
-            .onChange(of: notificationService.shouldShowAddFuel) { _, shouldShow in
-                if shouldShow {
-                    isPresentingForm = true
-                    notificationService.shouldShowAddFuel = false
+        }
+        .listStyle(.insetGrouped)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: { isPresentingForm = true }) {
+                    Label("Add Fill-up", systemImage: "plus.circle.fill")
                 }
+                .accessibilityLabel("Add new fill-up")
+                .accessibilityHint("Opens a form to log a new refuel")
+                .accessibilityIdentifier(AccessibilityID.trackingAddButton)
+            }
+        }
+        .sheet(isPresented: $isPresentingForm) {
+            FuelEntryFormView()
+                .presentationDetents([.medium, .large])
+        }
+        .sheet(item: $entryToEdit) { entry in
+            FuelEntryFormView(existingEntry: entry)
+                .presentationDetents([.medium, .large])
+        }
+        .onChange(of: notificationService.shouldShowAddFuel) { _, shouldShow in
+            if shouldShow {
+                isPresentingForm = true
+                notificationService.shouldShowAddFuel = false
             }
         }
     }

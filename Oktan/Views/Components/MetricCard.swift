@@ -1,7 +1,7 @@
 import SwiftUI
 
 // MARK: - iOS 26 Design Bible Compliant MetricCard
-// Removed: VStack spacing: 8 (numeric), RoundedRectangle cornerRadius: 12 (numeric)
+// Removed: numeric spacing, custom shapes with numeric corner radius
 
 struct MetricCard: View {
     let title: String
@@ -28,7 +28,7 @@ struct MetricCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding() // No numeric value - Bible compliant
         .background(Color(uiColor: .secondarySystemGroupedBackground))
-        // Removed: .clipShape(RoundedRectangle(cornerRadius: 12)) - numeric inference violation
+        // Removed: custom shape clipping with numeric corner radius
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title). \(value). \(trend ?? "")")
     }

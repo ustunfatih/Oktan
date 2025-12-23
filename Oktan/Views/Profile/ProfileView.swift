@@ -6,17 +6,14 @@ struct ProfileView: View {
     @State private var showingSignOutConfirmation = false
     
     var body: some View {
-        NavigationStack {
-            List {
-                if authManager.isAuthenticated, let user = authManager.currentUser {
-                    authenticatedSections(user: user)
-                } else {
-                    unauthenticatedSections
-                }
+        ListShell(title: "Profile") {
+            if authManager.isAuthenticated, let user = authManager.currentUser {
+                authenticatedSections(user: user)
+            } else {
+                unauthenticatedSections
             }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Profile")
         }
+        .listStyle(.insetGrouped)
     }
     
     // MARK: - Authenticated Sections (Bible Compliant)

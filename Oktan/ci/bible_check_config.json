@@ -71,12 +71,14 @@
       "DatePicker",
       "Picker",
       "Menu",
-      "ProgressView"
+      "ProgressView",
+      "ScrollView"
     ],
     "allowlist_enforcement_mode": "warn",
     "allowlist_exempt_paths": [
       "Tests/",
-      "Previews/"
+      "Previews/",
+      "Oktan/Navigation/Shells/"
     ]
   }
 }

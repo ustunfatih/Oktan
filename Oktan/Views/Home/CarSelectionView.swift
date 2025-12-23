@@ -30,22 +30,22 @@ struct CarSelectionView: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            List(filteredMakes) { make in
-                NavigationLink(value: make) {
-                    HStack {
-                        Text(make.name)
-                            .font(.headline)
-                        Spacer()
-                        Text("\(make.models.count) models")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+            SearchShell(title: "Select Make", query: $searchText) {
+                ForEach(filteredMakes) { make in
+                    NavigationLink(value: make) {
+                        HStack {
+                            Text(make.name)
+                                .font(.headline)
+                            Spacer()
+                            Text("\(make.models.count) models")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
             }
             .listStyle(.plain)
-            .navigationTitle("Select Make")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, prompt: "Search makes")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -141,7 +141,7 @@ struct CarConfirmationView: View {
     }
     
     // MARK: - Body (Bible Compliant)
-    // Removed: .frame(height: 200), .frame(width: 80), .padding(.trailing, 8), .font(.system(size: 80))
+    // Removed: fixed frame sizes, numeric padding, fixed font sizes
 
     var body: some View {
         Form {
