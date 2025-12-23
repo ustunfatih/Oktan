@@ -188,8 +188,8 @@ struct ReportsView: View {
 
     // MARK: - Metrics Content
 
+    @ViewBuilder
     private func metricsContent(summary: FuelSummary) -> some View {
-        Group {
             // Total Distance
             LabeledContent {
                 VStack(alignment: .trailing) {
@@ -247,15 +247,14 @@ struct ReportsView: View {
             } label: {
                 Label("Recent Efficiency", systemImage: "waveform.path.ecg.rectangle")
             }
-        }
     }
 
     // MARK: - Period Comparison Content
 
+    @ViewBuilder
     private func periodComparisonContent() -> some View {
         let comparison = ChartDataService.monthOverMonthComparison(from: repository.entries)
 
-        return Group {
             if let current = comparison.currentPeriod,
                (current.averageEfficiency != nil || current.averageCostPerKM != nil) {
                 // Efficiency
@@ -291,7 +290,6 @@ struct ReportsView: View {
                 Label("Add odometer readings to see efficiency trends", systemImage: "gauge.badge.plus")
                     .foregroundStyle(.secondary)
             }
-        }
     }
 
     private func trendIndicator(change: Double, isLowerBetter: Bool) -> some View {
@@ -344,11 +342,11 @@ struct ReportsView: View {
 
     // MARK: - Efficiency Chart Content
 
+    @ViewBuilder
     private func efficiencyChartContent() -> some View {
         let trendData = ChartDataService.efficiencyTrend(from: repository.entries)
         let rollingAverage = ChartDataService.rollingAverageEfficiency(from: repository.entries)
 
-        return Group {
             if trendData.isEmpty {
                 emptyChartLabel("Add odometer readings to see efficiency trends")
             } else {
@@ -392,9 +390,6 @@ struct ReportsView: View {
                     }
                 }
                 .chartXSelection(value: $selectedDate)
-                .chartAnimation {
-                    $0.opacity(0).scale(0.8).offset(y: 10)
-                }
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .month)) { _ in
                         AxisGridLine()
@@ -406,15 +401,14 @@ struct ReportsView: View {
                 .accessibilityLabel("Efficiency trend chart showing \(trendData.count) data points")
                 .accessibilityIdentifier(AccessibilityID.reportsChart)
             }
-        }
     }
 
     // MARK: - Monthly Cost Chart Content
 
+    @ViewBuilder
     private func monthlyCostChartContent() -> some View {
         let monthlyData = ChartDataService.aggregateMonthly(from: repository.entries)
 
-        return Group {
             if monthlyData.isEmpty {
                 emptyChartLabel("Track fill-ups to see monthly spending")
             } else {
@@ -427,9 +421,6 @@ struct ReportsView: View {
                     .opacity(selectedMonth == nil || selectedMonth == month.monthLabel ? 1 : 0.5)
                 }
                 .chartXSelection(value: $selectedMonth)
-                .chartAnimation {
-                    $0.opacity(0).scale(0.8).offset(y: 10)
-                }
                 .chartXAxis {
                     AxisMarks(values: .automatic) { _ in
                         AxisValueLabel(orientation: .verticalReversed)
@@ -437,15 +428,14 @@ struct ReportsView: View {
                 }
                 .aspectRatio(1.5, contentMode: .fit)
             }
-        }
     }
 
     // MARK: - Cost per KM Chart Content
 
+    @ViewBuilder
     private func costPerKMChartContent() -> some View {
         let entries = repository.entries.filter { $0.costPerKM != nil }
 
-        return Group {
             if entries.isEmpty {
                 emptyChartLabel("Track odometer values to see cost trends")
             } else {
@@ -465,9 +455,6 @@ struct ReportsView: View {
                     .lineStyle(StrokeStyle(lineWidth: 2))
                     .interpolationMethod(.catmullRom)
                 }
-                .chartAnimation {
-                    $0.opacity(0).scale(0.8).offset(y: 10)
-                }
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .month)) { _ in
                         AxisGridLine()
@@ -477,15 +464,14 @@ struct ReportsView: View {
                 .aspectRatio(1.5, contentMode: .fit)
                 .accessibilityLabel("Cost per kilometer trend chart")
             }
-        }
     }
 
     // MARK: - Drive Mode Chart Content
 
+    @ViewBuilder
     private func driveModeChartContent() -> some View {
         let comparisonData = ChartDataService.driveModeComparison(from: repository.entries)
 
-        return Group {
             if comparisonData.isEmpty {
                 emptyChartLabel("Log different drive modes to compare efficiency")
             } else {
@@ -504,12 +490,8 @@ struct ReportsView: View {
                     }
                 }
                 .chartXSelection(value: $selectedMode)
-                .chartAnimation {
-                    $0.opacity(0).scale(0.8).offset(y: 10)
-                }
                 .aspectRatio(1.5, contentMode: .fit)
             }
-        }
     }
 
     private func colorForModeCategory(_ category: String) -> Color {
@@ -522,11 +504,11 @@ struct ReportsView: View {
 
     // MARK: - Fill-up Frequency Content
 
+    @ViewBuilder
     private func fillupFrequencyContent() -> some View {
         let dayOfWeekData = ChartDataService.fillupsByDayOfWeek(from: repository.entries)
         let averageDays = ChartDataService.averageDaysBetweenFillups(from: repository.entries)
 
-        return Group {
             if let avg = averageDays {
                 LabeledContent("Average Interval", value: "Every \(Int(avg)) days")
             }
@@ -541,12 +523,8 @@ struct ReportsView: View {
                     )
                     .foregroundStyle(.orange)
                 }
-                .chartAnimation {
-                    $0.opacity(0).scale(0.8).offset(y: 10)
-                }
                 .aspectRatio(2, contentMode: .fit)
             }
-        }
     }
 
     // MARK: - Drive Mode Details Content

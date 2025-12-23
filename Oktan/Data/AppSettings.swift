@@ -118,7 +118,7 @@ final class AppSettings {
     }
     
     var accentColor: Color {
-        BibleColors.AppTheme.themes.first { $0.id == accentColorId }?.color ?? .blue
+        BibleColors.AccentTheme.themes.first { $0.id == accentColorId }?.color ?? .blue
     }
     
     var appLanguage: AppLanguage {

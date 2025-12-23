@@ -25,7 +25,7 @@ class PremiumManager {
         // Listen for subscription status changes
         Task {
             for await customerInfo in Purchases.shared.customerInfoStream {
-                await updatePremiumStatus(customerInfo)
+                updatePremiumStatus(customerInfo)
             }
         }
     }
@@ -43,7 +43,7 @@ class PremiumManager {
     func restore() async {
         do {
             let info = try await Purchases.shared.restorePurchases()
-            await updatePremiumStatus(info)
+            updatePremiumStatus(info)
         } catch {
             print("Restore failed: \(error)")
         }

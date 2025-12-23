@@ -87,6 +87,14 @@ struct HomeView: View {
             FuelEntryFormView()
                 .presentationDetents([.medium, .large])
         }
+        .sheet(isPresented: $isPresentingCarSelection) {
+            if let sd = envCarRepositorySD {
+                CarSelectionView(carRepository: envCarRepository ?? CarRepository())
+                    .environment(sd)
+            } else {
+                CarSelectionView(carRepository: envCarRepository ?? localCarRepository ?? CarRepository())
+            }
+        }
         .onChange(of: repository.entries) { _, entries in
             milestoneService.checkMilestones(entries: entries, summary: summary)
         }

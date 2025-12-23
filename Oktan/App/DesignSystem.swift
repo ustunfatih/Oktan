@@ -53,23 +53,23 @@ enum BibleColors {
             endPoint: .bottomTrailing
         )
     }
-}
 
-// MARK: - App Themes
+    // MARK: - App Themes (Accent Colors)
 
-struct AppTheme: Identifiable, Hashable {
-    let id: String
-    let name: String
-    let color: Color
-    
-    static let themes: [AppTheme] = [
-        AppTheme(id: "blue", name: "Classic Blue", color: .blue),
-        AppTheme(id: "indigo", name: "Royal Indigo", color: .indigo),
-        AppTheme(id: "teal", name: "Modern Teal", color: .teal),
-        AppTheme(id: "mint", name: "Fresh Mint", color: .mint),
-        AppTheme(id: "orange", name: "Energetic Orange", color: .orange),
-        AppTheme(id: "pink", name: "Vibrant Pink", color: .pink)
-    ]
+    struct AccentTheme: Identifiable, Hashable {
+        let id: String
+        let name: String
+        let color: Color
+        
+        static let themes: [AccentTheme] = [
+            AccentTheme(id: "blue", name: "Classic Blue", color: .blue),
+            AccentTheme(id: "indigo", name: "Royal Indigo", color: .indigo),
+            AccentTheme(id: "teal", name: "Modern Teal", color: .teal),
+            AccentTheme(id: "mint", name: "Fresh Mint", color: .mint),
+            AccentTheme(id: "orange", name: "Energetic Orange", color: .orange),
+            AccentTheme(id: "pink", name: "Vibrant Pink", color: .pink)
+        ]
+    }
 }
 
 // MARK: - DesignSystem Namespace for Legacy Compatibility

@@ -81,7 +81,7 @@ struct SettingsView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(BibleColors.AppTheme.themes) { theme in
+                        ForEach(BibleColors.AccentTheme.themes) { theme in
                             Button(action: {
                                 withAnimation {
                                     settings.accentColorId = theme.id

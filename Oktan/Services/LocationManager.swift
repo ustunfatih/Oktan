@@ -78,8 +78,8 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
             // If we find a gas station within ~100-200 meters
             if let firstMatch = response.mapItems.first {
                 // Calculate actual distance
-                let itemLocation = firstMatch.placemark.location
-                let distance = itemLocation?.distance(from: location) ?? 1000
+                let itemLocation = firstMatch.location
+                let distance = itemLocation.distance(from: location)
                 
                 print("Nearest Gas Station: \(firstMatch.name ?? "Unknown") at \(Int(distance))m")
                 
